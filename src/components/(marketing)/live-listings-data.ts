@@ -23,7 +23,7 @@ export const LIVE_LISTINGS: LiveListing[] = [
   {
     id: "2",
     title: "2018 Toyota Camry SE",
-    imageSrc: `https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?${q()}`,
+    imageSrc: `https://images.unsplash.com/photo-1617814076367-b759c7d7e738?${q()}`,
     km: "28,500 km",
     location: "Brooklyn, NY",
     timerLabel: "45 m left",
@@ -31,7 +31,7 @@ export const LIVE_LISTINGS: LiveListing[] = [
   {
     id: "3",
     title: "2023 Mercedes-Benz C300",
-    imageSrc: `https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?${q()}`,
+    imageSrc: `https://images.unsplash.com/photo-1552519507-da3b142c6e3d?${q()}`,
     km: "11,000 miles",
     location: "New York, NY",
     timerLabel: "2h 10 m left",

@@ -41,14 +41,15 @@ function DealerMessagesContent() {
     if (!list || list.length === 0) return [];
 
     return list.map((t) => {
-      const otherParty = t.other_party_label || "Seller";
+      const otherParty = t.seller_name || t.other_party_label || "Car Seller";
       const initial = otherParty.charAt(0).toUpperCase() || "S";
+      const dealerRealName = t.dealer_name || "My Dealership";
 
       return {
         id: String(t.id),
         dealerId: String(t.dealer || "1"),
-        dealerName: t.dealer_name || "Dealer",
-        dealerInitial: "D",
+        dealerName: dealerRealName,
+        dealerInitial: (dealerRealName.charAt(0) || "D").toUpperCase(),
         dealerImage: null,
         sellerId: String(t.seller || "1"),
         sellerName: otherParty,

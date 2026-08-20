@@ -15,7 +15,7 @@ type PageProps = {
 
 export default function DealerActiveOfferPage({ params }: PageProps) {
   const { id } = use(params);
-  const { data: apiListing, isLoading } = useGetListingByIdQuery(id, { pollingInterval: 2500 });
+  const { data: apiListing, isLoading } = useGetListingByIdQuery(id);
 
   if (isLoading) {
     return (
@@ -63,7 +63,7 @@ export default function DealerActiveOfferPage({ params }: PageProps) {
     };
   }
 
-  const { data: myRankData } = useGetMyRankQuery(id, { pollingInterval: 2500 });
+  const { data: myRankData } = useGetMyRankQuery(id);
 
   const reserveOrZero = Number((apiListing as any)?.reserve_price || 0);
   const rawHighest = Number((apiListing as any)?.current_highest_bid || myRankData?.amount || reserveOrZero);

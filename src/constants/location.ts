@@ -1,5 +1,53 @@
 export const LOCATION_RESTRICTION_MESSAGE =
-  "Unfortunately, our service is not yet available in your location.";
+  "Unfortunately, our service is not yet available in your location. We currently operate exclusively in Florida and Georgia.";
+
+export interface CityOption {
+  name: string;
+  zip: string;
+}
+
+export interface StateOption {
+  code: "FL" | "GA";
+  name: string;
+  defaultZip: string;
+  defaultCity: string;
+  cities: CityOption[];
+}
+
+export const SUPPORTED_STATES: StateOption[] = [
+  {
+    code: "FL",
+    name: "Florida (FL)",
+    defaultZip: "33101",
+    defaultCity: "Miami, FL",
+    cities: [
+      { name: "Miami (33101)", zip: "33101" },
+      { name: "Orlando (32801)", zip: "32801" },
+      { name: "Tampa (33601)", zip: "33601" },
+      { name: "Jacksonville (32099)", zip: "32099" },
+      { name: "Fort Lauderdale (33301)", zip: "33301" },
+      { name: "Tallahassee (32301)", zip: "32301" },
+      { name: "St. Petersburg (33701)", zip: "33701" },
+      { name: "West Palm Beach (33401)", zip: "33401" },
+    ],
+  },
+  {
+    code: "GA",
+    name: "Georgia (GA)",
+    defaultZip: "30301",
+    defaultCity: "Atlanta, GA",
+    cities: [
+      { name: "Atlanta (30301)", zip: "30301" },
+      { name: "Savannah (31401)", zip: "31401" },
+      { name: "Augusta (30901)", zip: "30901" },
+      { name: "Columbus (31901)", zip: "31901" },
+      { name: "Macon (31201)", zip: "31201" },
+      { name: "Athens (30601)", zip: "30601" },
+      { name: "Sandy Springs (30328)", zip: "30328" },
+      { name: "Roswell (30075)", zip: "30075" },
+    ],
+  },
+];
 
 /**
  * Validates whether a given US ZIP code belongs to Florida (32000-34999) or Georgia (30000-31999, 39901).

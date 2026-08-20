@@ -15,7 +15,7 @@ type PageProps = {
 
 export default function DealerUnlockChatPage({ params }: PageProps) {
   const { id } = use(params);
-  const { data: apiListing, isLoading } = useGetListingByIdQuery(id, { pollingInterval: 2500 });
+  const { data: apiListing, isLoading } = useGetListingByIdQuery(id);
   const fallback = getWonUnlockListing(id);
 
   if (isLoading && !apiListing && !fallback) {

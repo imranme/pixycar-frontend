@@ -20,6 +20,7 @@ export type SellerListingDetail = {
   status: ListingStatus;
   imageSrc: string;
   images: string[];
+  videoUrl?: string | null;
   offers: OfferRowData[];
   /** Initial countdown total seconds (Active view). */
   timerSeconds?: number;

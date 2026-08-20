@@ -4,6 +4,8 @@ export interface ThreadItem {
   listing_title: string;
   is_unlocked: boolean;
   other_party_label: string;
+  dealer_name?: string;
+  seller_name?: string;
   last_message: { text?: string; created_at?: string } | string | null;
   created_at: string;
   updated_at: string;
@@ -20,6 +22,7 @@ export interface ThreadMessageItem {
   id: number;
   sender_id: number;
   sender_email: string;
+  sender_name?: string;
   text: string;
   created_at: string;
 }
@@ -46,6 +49,7 @@ export interface SendMessageResponse {
   id: number;
   sender_id: number;
   sender_email: string;
+  sender_name?: string;
   text: string;
   created_at: string;
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import {
@@ -7,6 +8,7 @@ import {
   Calendar,
   Car,
   CheckCircle2,
+  ChevronDown,
   Clock,
   Fuel,
   Gauge,
@@ -15,6 +17,7 @@ import {
   Shield,
   Trophy,
   User,
+  Video,
   XCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -112,6 +115,7 @@ function DetailSkeleton() {
 export function ListingDetailView() {
   const params = useParams();
   const listingId = Number(params?.id);
+  const [showAllBids, setShowAllBids] = useState(false);
 
   const { data: listing, isLoading, isError, error } = useGetListingByIdQuery(listingId, {
     skip: !listingId || isNaN(listingId),
@@ -199,6 +203,28 @@ export function ListingDetailView() {
             ) : (
               <div className="flex aspect-[16/10] w-full items-center justify-center rounded-2xl bg-gradient-to-br from-slate-700 to-slate-900">
                 <Car className="size-24 text-white/15" strokeWidth={1} />
+              </div>
+            )}
+
+            {/* Video Walkthrough */}
+            {listing.video_file && (
+              <div className="mt-6 rounded-2xl border border-[#E5E7EB] bg-white p-4 sm:p-6 shadow-sm">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="flex size-8 items-center justify-center rounded-lg bg-[#FFA51F]/15 text-[#FFA51F]">
+                    <Video className="size-4.5" strokeWidth={2} />
+                  </div>
+                  <h2 className="font-hero-heading text-lg font-bold text-[#1E1E1E]">
+                    Vehicle Video Walkthrough
+                  </h2>
+                </div>
+                <div className="overflow-hidden rounded-xl border border-neutral-200 bg-black aspect-video max-h-[380px] w-full">
+                  <video
+                    src={listing.video_file}
+                    controls
+                    playsInline
+                    className="size-full object-contain mx-auto"
+                  />
+                </div>
               </div>
             )}
 
@@ -337,11 +363,16 @@ export function ListingDetailView() {
             {/* Top bids leaderboard */}
             {listing.top_bids.length > 0 && (
               <div className="rounded-2xl border border-[#E5E7EB] bg-white p-5">
-                <h3 className="font-hero-heading text-base font-bold text-[#1E1E1E]">
-                  Top Bids
-                </h3>
+                <div className="flex items-center justify-between">
+                  <h3 className="font-hero-heading text-base font-bold text-[#1E1E1E]">
+                    Top Bids ({listing.top_bids.length})
+                  </h3>
+                  <span className="rounded-full bg-emerald-50 px-2 py-0.5 font-navbar text-[11px] font-semibold text-emerald-600">
+                    Leaderboard
+                  </span>
+                </div>
                 <div className="mt-3 space-y-2">
-                  {listing.top_bids.map((bid: TopBid, idx: number) => (
+                  {(showAllBids ? listing.top_bids : listing.top_bids.slice(0, 4)).map((bid: TopBid, idx: number) => (
                     <div
                       key={bid.id}
                       className={cn(
@@ -388,6 +419,27 @@ export function ListingDetailView() {
                       </div>
                     </div>
                   ))}
+
+                  {/* See More Toggle */}
+                  {listing.top_bids.length > 4 && (
+                    <button
+                      type="button"
+                      onClick={() => setShowAllBids((prev) => !prev)}
+                      className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border border-[#E5E7EB] bg-neutral-50 py-2 font-navbar text-xs font-semibold text-[#1E1E1E] transition hover:bg-neutral-100 hover:text-[#FFA51F] cursor-pointer"
+                    >
+                      <span>
+                        {showAllBids
+                          ? "Show less"
+                          : `See more (${listing.top_bids.length - 4} more)`}
+                      </span>
+                      <ChevronDown
+                        className={cn(
+                          "size-4 transition-transform duration-200",
+                          showAllBids && "rotate-180"
+                        )}
+                      />
+                    </button>
+                  )}
                 </div>
               </div>
             )}

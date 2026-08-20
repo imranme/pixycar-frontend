@@ -83,6 +83,7 @@ export function DealerNavbar() {
               width={140}
               height={60}
               className="h-8 w-auto sm:h-9"
+              style={{ width: "auto", height: "auto" }}
               priority
             />
           </Link>

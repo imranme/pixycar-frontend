@@ -10,6 +10,7 @@ export type DealerBiddingListing = {
   vin: string;
   description: string;
   images: string[];
+  videoUrl?: string | null;
   specs: { label: string; value: string }[];
   timeRemainingSeconds?: number;
   expiresAt?: string;
@@ -17,9 +18,14 @@ export type DealerBiddingListing = {
   totalOffers?: number;
 };
 
-const MERC_IMGS = Array.from({ length: 6 }, (_, i) =>
-  `https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=1200&h=800&fit=crop&sig=${i}`
-);
+const MERC_IMGS = [
+  "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=1200&h=800&fit=crop",
+  "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1200&h=800&fit=crop",
+  "https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=1200&h=800&fit=crop",
+  "https://images.unsplash.com/photo-1559416523-140ddc3d238c?w=1200&h=800&fit=crop",
+  "https://images.unsplash.com/photo-1612825173281-9a193378527e?w=1200&h=800&fit=crop",
+  "https://images.unsplash.com/photo-1544636331-2687092aa965?w=1200&h=800&fit=crop"
+];
 
 const SPECS: { label: string; value: string }[] = [
   { label: "Drivability", value: "Yes" },

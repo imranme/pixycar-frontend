@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { Calendar, FileText, Gauge, MapPin, TrendingUp, CheckCircle2, Lock, ArrowRight } from "lucide-react";
+import { Calendar, FileText, Gauge, MapPin, TrendingUp, CheckCircle2, Lock, ArrowRight, Video } from "lucide-react";
 import { ROUTES } from "@/constants/routes";
 import { ImageCarousel } from "@/components/seller/my-listings/image-carousel";
 import type { DealerBiddingListing } from "@/components/dealer/dealer-dummy-data";
@@ -237,6 +237,28 @@ export function BiddingDetailsClient({ listing }: BiddingDetailsClientProps) {
         {/* Left Column: Carousel, Details, Specs */}
         <div>
           <ImageCarousel images={listing.images} />
+
+          {/* Video Player */}
+          {listing.videoUrl && (
+            <div className="mt-6 rounded-2xl border border-[#E5E7EB] bg-white p-4 sm:p-6 shadow-sm">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="flex size-8 items-center justify-center rounded-lg bg-[#FFA51F]/15 text-[#FFA51F]">
+                  <Video className="size-4.5" strokeWidth={2} />
+                </div>
+                <h2 className="font-hero-heading text-lg font-bold text-[#1E1E1E]">
+                  Vehicle Video Walkthrough
+                </h2>
+              </div>
+              <div className="overflow-hidden rounded-xl border border-neutral-200 bg-black aspect-video max-h-[360px] w-full">
+                <video
+                  src={listing.videoUrl}
+                  controls
+                  playsInline
+                  className="size-full object-contain mx-auto"
+                />
+              </div>
+            </div>
+          )}
 
           <h2 className="mt-5 font-hero-heading text-xl sm:text-2xl font-bold text-[#1E1E1E]">
             {listing.title}

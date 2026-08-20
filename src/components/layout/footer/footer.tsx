@@ -35,9 +35,10 @@ export function Footer() {
             <Image
               src="/pixycar-logo.png"
               alt="PixyCar"
-              width={140}   // w-32 = 128px
-              height={100}   // h-24 = 96px
-              className="object-contain"
+              width={140}
+              height={60}
+              className="h-8 w-auto sm:h-9 object-contain"
+              style={{ width: "auto", height: "auto" }}
               priority
             />
           </Link>

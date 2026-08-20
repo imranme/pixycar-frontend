@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { ChevronDown } from "lucide-react";
 import type { SellerListingDetail } from "@/components/seller/my-listings/listings-dummy-data";
 import { OfferRow } from "@/components/seller/my-listings/offer-row";
 import { ConfirmSelectionModal } from "@/components/seller/my-listings/confirm-selection-modal";
@@ -18,7 +19,11 @@ export function OfferingCompleteView({ listing }: OfferingCompleteViewProps) {
   const [confirmWinnerApi, { isLoading: isConfirming }] = useConfirmWinnerMutation();
   const [showModal, setShowModal] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  const [showAllOffers, setShowAllOffers] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
+
+  const visibleOffers = showAllOffers ? listing.offers : listing.offers.slice(0, 4);
+  const remainingCount = listing.offers.length - 4;
 
   const selectedDealer = listing.offers[selectedIndex] ?? listing.offers[0] ?? null;
 
@@ -85,7 +90,7 @@ export function OfferingCompleteView({ listing }: OfferingCompleteViewProps) {
           All Offers ({listing.offers.length})
         </h2>
         <div className="mt-4 flex flex-col gap-3">
-          {listing.offers.map((o, idx) => {
+          {visibleOffers.map((o, idx) => {
             const isSelected = selectedIndex === idx;
 
             return (
@@ -112,11 +117,32 @@ export function OfferingCompleteView({ listing }: OfferingCompleteViewProps) {
           })}
         </div>
 
+        {/* See More / Show Less Toggle Button */}
+        {listing.offers.length > 4 && (
+          <button
+            type="button"
+            onClick={() => setShowAllOffers((prev) => !prev)}
+            className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-xl border border-[#E5E7EB] bg-neutral-50 py-2.5 font-navbar text-xs font-semibold text-[#1E1E1E] transition hover:bg-neutral-100 hover:text-[#FFA51F] cursor-pointer"
+          >
+            <span>
+              {showAllOffers
+                ? "Show less"
+                : `See more (${remainingCount} more ${remainingCount === 1 ? "offer" : "offers"})`}
+            </span>
+            <ChevronDown
+              className={cn(
+                "size-4 transition-transform duration-200",
+                showAllOffers && "rotate-180"
+              )}
+            />
+          </button>
+        )}
+
         <button
           type="button"
           disabled={listing.offers.length === 0}
           onClick={openConnect}
-          className="mt-8 w-full cursor-pointer rounded-xl bg-[#FFA51F] py-3.5 font-navbar text-base font-bold text-[#1E1E1E] transition hover:bg-[#e8940f] disabled:cursor-not-allowed disabled:bg-neutral-200"
+          className="mt-6 w-full cursor-pointer rounded-xl bg-[#FFA51F] py-3.5 font-navbar text-base font-bold text-[#1E1E1E] transition hover:bg-[#e8940f] disabled:cursor-not-allowed disabled:bg-neutral-200"
         >
           Connect with dealer
         </button>

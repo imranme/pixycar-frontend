@@ -28,12 +28,10 @@ export default function SellerListingDetailPage() {
 
   const { data: apiListing, isLoading, isError } = useGetListingByIdQuery(listingId, {
     skip: !listingId || isNaN(listingId),
-    pollingInterval: 2500,
   });
 
   const { data: offersData } = useGetListingOffersQuery(listingId, {
     skip: !listingId || isNaN(listingId),
-    pollingInterval: 2500,
   });
 
   if (isLoading) {
@@ -130,6 +128,7 @@ export default function SellerListingDetailPage() {
     status: effectiveStatus,
     imageSrc: (apiListing.images && apiListing.images[0]) || "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=1200&h=800&fit=crop",
     images: apiListing.images && apiListing.images.length > 0 ? apiListing.images : ["https://images.unsplash.com/photo-1555215695-3004980ad54e?w=1200&h=800&fit=crop"],
+    videoUrl: apiListing.video_file || null,
     offers: offersList,
     timerSeconds: apiListing.time_remaining_seconds,
     expiresAt: apiListing.expires_at || undefined,

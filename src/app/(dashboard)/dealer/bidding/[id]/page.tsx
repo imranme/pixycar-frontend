@@ -14,7 +14,7 @@ type PageProps = {
 
 export default function DealerBiddingPage({ params }: PageProps) {
   const { id } = use(params);
-  const { data: apiListing, isLoading, isError } = useGetListingByIdQuery(id, { pollingInterval: 2500 });
+  const { data: apiListing, isLoading, isError } = useGetListingByIdQuery(id);
 
   if (isLoading) {
     return (
@@ -45,6 +45,7 @@ export default function DealerBiddingPage({ params }: PageProps) {
         : l.thumbnail
         ? [l.thumbnail]
         : ["https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800&h=500&fit=crop"],
+      videoUrl: l.video_file || null,
       specs: [
         { label: "Drivability", value: l.is_drivable ? "Yes" : "No" },
         { label: "Title status", value: l.title_status || "Clean" },

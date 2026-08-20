@@ -6,7 +6,7 @@ import { AuthLayout } from "@/components/auth/auth-layout";
 import { TermsModal } from "@/components/auth/terms-modal";
 import { DealerForm } from "@/components/auth/sign-up/dealer-form";
 import { OtpVerification } from "@/components/auth/sign-up/otp-verification";
-import { SuccessSeller } from "@/components/auth/sign-up/success-seller";
+import { SuccessDealer } from "@/components/auth/sign-up/success-dealer";
 import { useRegisterDealer } from "@/features/auth/hooks/use-sign-up";
 import { useVerifyOtp } from "@/features/auth/hooks/use-verify-otp";
 import { useVerifyDealerInviteQuery } from "@/store/features/auth/authApi";
@@ -193,7 +193,7 @@ function DealerInviteContent() {
         />
       )}
 
-      {step === 3 && <SuccessSeller />}
+      {step === 3 && <SuccessDealer />}
     </AuthLayout>
   );
 }

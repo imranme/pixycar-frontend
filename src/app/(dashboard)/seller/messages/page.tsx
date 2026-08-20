@@ -41,7 +41,7 @@ function SellerMessagesContent() {
     if (!list || list.length === 0) return [];
 
     return list.map((t) => {
-      const otherParty = t.other_party_label || "Dealer";
+      const otherParty = t.dealer_name || t.other_party_label || "Verified Dealer";
       const initial = otherParty.charAt(0).toUpperCase() || "D";
 
       return {

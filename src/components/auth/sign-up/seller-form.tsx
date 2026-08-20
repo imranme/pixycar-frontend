@@ -12,6 +12,7 @@ import type { RegisterAgreementSetter } from "./agreement-types";
 import { FieldError } from "./field-error";
 import { PasswordStrengthFeedback } from "./password-strength-feedback";
 import { sellerSignUpSchema, type SellerSignUpInput } from "./sign-up-schemas";
+import { SUPPORTED_STATES } from "@/constants/location";
 
 type SellerFormProps = {
   registerAgreementSetter: RegisterAgreementSetter;
@@ -48,6 +49,9 @@ export function SellerForm({
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [confirmSubmitMessage, setConfirmSubmitMessage] = useState("");
+  const [selectedState, setSelectedState] = useState<"FL" | "GA">("GA");
+  const [selectedCityZip, setSelectedCityZip] = useState<string>("30301");
+
   const {
     register,
     handleSubmit,
@@ -61,14 +65,37 @@ export function SellerForm({
       fullName: "",
       email: "",
       phone: "",
-      address: "",
-      zip: "",
+      address: "Atlanta, GA",
+      zip: "30301",
       password: "",
       confirmPassword: "",
       agreed: false,
     },
     mode: "onTouched",
   });
+
+  const handleStateChange = (stateCode: "FL" | "GA") => {
+    setSelectedState(stateCode);
+    const stateObj = SUPPORTED_STATES.find((s) => s.code === stateCode);
+    if (stateObj) {
+      const firstCity = stateObj.cities[0];
+      setSelectedCityZip(firstCity.zip);
+      const cityName = firstCity.name.replace(/\s*\(\d+\)/, "");
+      setValue("address", `${cityName}, ${stateCode}`, { shouldValidate: true, shouldDirty: true });
+      setValue("zip", firstCity.zip, { shouldValidate: true, shouldDirty: true });
+    }
+  };
+
+  const handleCityChange = (zip: string) => {
+    setSelectedCityZip(zip);
+    const stateObj = SUPPORTED_STATES.find((s) => s.code === selectedState);
+    const cityObj = stateObj?.cities.find((c) => c.zip === zip);
+    if (cityObj) {
+      const cityName = cityObj.name.replace(/\s*\(\d+\)/, "");
+      setValue("address", `${cityName}, ${selectedState}`, { shouldValidate: true, shouldDirty: true });
+      setValue("zip", zip, { shouldValidate: true, shouldDirty: true });
+    }
+  };
 
   useEffect(() => {
     registerAgreementSetter((value) => {
@@ -149,30 +176,68 @@ export function SellerForm({
             </div>
           </div>
 
-          <div>
-            <label className="block font-navbar text-sm font-medium text-[#1E1E1E]">
-              Address <span className="text-xs font-normal text-neutral-500">(FL or GA only)</span>
-            </label>
-            <input
-              type="text"
-              placeholder="City, State (e.g. Miami, FL)"
-              className={cn(inputClassName(!!errors.address), "mt-1.5")}
-              {...register("address")}
-            />
-            <FieldError message={errors.address?.message} />
+          {/* State & City / Area Quick Selection Dropdowns */}
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="block font-navbar text-sm font-medium text-[#1E1E1E]">
+                State
+              </label>
+              <select
+                value={selectedState}
+                onChange={(e) => handleStateChange(e.target.value as "FL" | "GA")}
+                className={cn(inputClassName(false), "mt-1.5 cursor-pointer bg-white")}
+              >
+                {SUPPORTED_STATES.map((st) => (
+                  <option key={st.code} value={st.code}>
+                    {st.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block font-navbar text-sm font-medium text-[#1E1E1E]">
+                City / Region
+              </label>
+              <select
+                value={selectedCityZip}
+                onChange={(e) => handleCityChange(e.target.value)}
+                className={cn(inputClassName(false), "mt-1.5 cursor-pointer bg-white")}
+              >
+                {SUPPORTED_STATES.find((s) => s.code === selectedState)?.cities.map((ct) => (
+                  <option key={ct.zip} value={ct.zip}>
+                    {ct.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
-          <div>
-            <label className="block font-navbar text-sm font-medium text-[#1E1E1E]">
-              ZIP Code <span className="text-xs font-normal text-neutral-500">(Florida or Georgia)</span>
-            </label>
-            <input
-              type="text"
-              placeholder="e.g. 33101 or 30301"
-              className={cn(inputClassName(!!errors.zip), "mt-1.5")}
-              {...register("zip")}
-            />
-            <FieldError message={errors.zip?.message} />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="block font-navbar text-sm font-medium text-[#1E1E1E]">
+                Street / Full Address
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. Atlanta, GA"
+                className={cn(inputClassName(!!errors.address), "mt-1.5")}
+                {...register("address")}
+              />
+              <FieldError message={errors.address?.message} />
+            </div>
+
+            <div>
+              <label className="block font-navbar text-sm font-medium text-[#1E1E1E]">
+                ZIP Code <span className="text-xs font-normal text-emerald-600">(Auto-filled)</span>
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. 30301 or 33101"
+                className={cn(inputClassName(!!errors.zip), "mt-1.5")}
+                {...register("zip")}
+              />
+              <FieldError message={errors.zip?.message} />
+            </div>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">

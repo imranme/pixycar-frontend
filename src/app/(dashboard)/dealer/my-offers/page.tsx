@@ -11,7 +11,7 @@ import { useGetMyOffersQuery } from "@/store/features/listings/listingsApi";
 export default function DealerMyOffersPage() {
   const [tab, setTab] = useState<OffersTab>("Active");
   const [deletedLostIds, setDeletedLostIds] = useState<string[]>([]);
-  const { data: apiOffersData, isLoading } = useGetMyOffersQuery(undefined, { pollingInterval: 2500 });
+  const { data: apiOffersData, isLoading } = useGetMyOffersQuery();
 
   const apiOffers = useMemo(() => {
     return Array.isArray(apiOffersData)

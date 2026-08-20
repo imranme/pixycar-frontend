@@ -12,6 +12,7 @@ import type { RegisterAgreementSetter } from "./agreement-types";
 import { FieldError } from "./field-error";
 import { PasswordStrengthFeedback } from "./password-strength-feedback";
 import { dealerSignUpSchema, type DealerSignUpInput } from "./sign-up-schemas";
+import { SUPPORTED_STATES } from "@/constants/location";
 
 type DealerFormProps = {
   registerAgreementSetter: RegisterAgreementSetter;
@@ -49,6 +50,9 @@ export function DealerForm({
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [confirmSubmitMessage, setConfirmSubmitMessage] = useState("");
+  const [selectedState, setSelectedState] = useState<"FL" | "GA">("GA");
+  const [selectedCityZip, setSelectedCityZip] = useState<string>("30301");
+
   const {
     register,
     handleSubmit,
@@ -62,8 +66,8 @@ export function DealerForm({
       businessName: "",
       businessEmail: initialEmail,
       businessPhone: "",
-      address: "",
-      zip: "",
+      address: "Atlanta, GA",
+      zip: "30301",
       licenseNumber: "",
       password: "",
       confirmPassword: "",
@@ -71,6 +75,29 @@ export function DealerForm({
     },
     mode: "onTouched",
   });
+
+  const handleStateChange = (stateCode: "FL" | "GA") => {
+    setSelectedState(stateCode);
+    const stateObj = SUPPORTED_STATES.find((s) => s.code === stateCode);
+    if (stateObj) {
+      const firstCity = stateObj.cities[0];
+      setSelectedCityZip(firstCity.zip);
+      const cityName = firstCity.name.replace(/\s*\(\d+\)/, "");
+      setValue("address", `${cityName}, ${stateCode}`, { shouldValidate: true, shouldDirty: true });
+      setValue("zip", firstCity.zip, { shouldValidate: true, shouldDirty: true });
+    }
+  };
+
+  const handleCityChange = (zip: string) => {
+    setSelectedCityZip(zip);
+    const stateObj = SUPPORTED_STATES.find((s) => s.code === selectedState);
+    const cityObj = stateObj?.cities.find((c) => c.zip === zip);
+    if (cityObj) {
+      const cityName = cityObj.name.replace(/\s*\(\d+\)/, "");
+      setValue("address", `${cityName}, ${selectedState}`, { shouldValidate: true, shouldDirty: true });
+      setValue("zip", zip, { shouldValidate: true, shouldDirty: true });
+    }
+  };
 
   useEffect(() => {
     if (initialEmail) {
@@ -100,7 +127,6 @@ export function DealerForm({
       return;
     }
     setConfirmSubmitMessage("");
-    console.log("dealer-sign-up", data);
     onSignUpComplete(data);
   };
 
@@ -110,10 +136,10 @@ export function DealerForm({
 
       <div className="rounded-2xl border border-neutral-200/80 bg-white p-6 shadow-sm sm:p-8">
         <h2 className="text-center font-hero-heading text-2xl font-bold text-[#1E1E1E]">
-          Join Us Today!
+          Join With Us Today!
         </h2>
         <p className="mt-2 text-center font-navbar text-base font-normal text-[#5E5E5E]">
-          Create your account
+          Create your Dealer account
         </p>
 
         <form onSubmit={handleSubmit(onSubmit)} className="mt-8 flex flex-col gap-4">
@@ -123,7 +149,7 @@ export function DealerForm({
             </label>
             <input
               type="text"
-              placeholder="Enter your Name"
+              placeholder="e.g. Apex Auto Sales"
               className={cn(inputClassName(!!errors.businessName), "mt-1.5")}
               {...register("businessName")}
             />
@@ -160,11 +186,46 @@ export function DealerForm({
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label className="block font-navbar text-sm font-medium text-[#1E1E1E]">
+                State
+              </label>
+              <select
+                value={selectedState}
+                onChange={(e) => handleStateChange(e.target.value as "FL" | "GA")}
+                className={cn(inputClassName(false), "mt-1.5 cursor-pointer bg-white")}
+              >
+                {SUPPORTED_STATES.map((st) => (
+                  <option key={st.code} value={st.code}>
+                    {st.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block font-navbar text-sm font-medium text-[#1E1E1E]">
+                City / Region
+              </label>
+              <select
+                value={selectedCityZip}
+                onChange={(e) => handleCityChange(e.target.value)}
+                className={cn(inputClassName(false), "mt-1.5 cursor-pointer bg-white")}
+              >
+                {SUPPORTED_STATES.find((s) => s.code === selectedState)?.cities.map((ct) => (
+                  <option key={ct.zip} value={ct.zip}>
+                    {ct.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="block font-navbar text-sm font-medium text-[#1E1E1E]">
                 Business Address
               </label>
               <input
                 type="text"
-                placeholder="City, State"
+                placeholder="e.g. Atlanta, GA"
                 className={cn(inputClassName(!!errors.address), "mt-1.5")}
                 {...register("address")}
               />
@@ -172,11 +233,11 @@ export function DealerForm({
             </div>
             <div>
               <label className="block font-navbar text-sm font-medium text-[#1E1E1E]">
-                ZIP Code
+                ZIP Code <span className="text-xs font-normal text-emerald-600">(Auto-filled)</span>
               </label>
               <input
                 type="text"
-                placeholder="ZIP Code"
+                placeholder="e.g. 30301 or 33101"
                 className={cn(inputClassName(!!errors.zip), "mt-1.5")}
                 {...register("zip")}
               />
