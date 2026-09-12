@@ -228,12 +228,16 @@ export function SellerForm({
 
             <div>
               <label className="block font-navbar text-sm font-medium text-[#1E1E1E]">
-                ZIP Code <span className="text-xs font-normal text-emerald-600">(Auto-filled)</span>
+                ZIP Code <span className="text-xs font-normal text-emerald-600">(Auto-filled from City)</span>
               </label>
               <input
                 type="text"
+                readOnly
                 placeholder="e.g. 30301 or 33101"
-                className={cn(inputClassName(!!errors.zip), "mt-1.5")}
+                className={cn(
+                  inputClassName(!!errors.zip),
+                  "mt-1.5 cursor-not-allowed bg-neutral-100/80 font-semibold text-neutral-700 select-none"
+                )}
                 {...register("zip")}
               />
               <FieldError message={errors.zip?.message} />

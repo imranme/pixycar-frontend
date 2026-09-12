@@ -35,11 +35,19 @@ export function OfferingCompleteView({ listing }: OfferingCompleteViewProps) {
     if (!selectedDealer) return;
     let targetRoomId: string | number = listing.id;
 
+    // Safely extract numeric dealer ID
+    const extractedDealerId = selectedDealer.dealerNumericId 
+      ? Number(selectedDealer.dealerNumericId)
+      : (() => {
+          const match = String(selectedDealer.dealerId || "").match(/\d+/);
+          return match ? parseInt(match[0], 10) : undefined;
+        })();
+
     try {
       const res = await confirmWinnerApi({
         listingId: listing.id,
-        dealerId: selectedDealer.dealerNumericId,
-        offerId: selectedDealer.id,
+        dealerId: extractedDealerId,
+        offerId: typeof selectedDealer.id === "number" || (typeof selectedDealer.id === "string" && !isNaN(Number(selectedDealer.id))) ? selectedDealer.id : undefined,
       }).unwrap();
 
       if (res && (res as any).thread_id) {
@@ -58,7 +66,7 @@ export function OfferingCompleteView({ listing }: OfferingCompleteViewProps) {
       }, 1200);
     } catch (err: any) {
       console.error("Winner confirmation failed:", err);
-      const errMsg = err?.data?.detail || err?.data?.message || "Could not confirm winner. Please try again.";
+      const errMsg = err?.data?.detail || err?.data?.message || err?.data?.error || "Could not confirm winner. Please try again.";
       setToast({ message: errMsg, type: "error" });
       setShowModal(false);
       window.setTimeout(() => setToast(null), 3500);

@@ -30,7 +30,6 @@ export function EnterEmail({ setStep, setEmail }: EnterEmailProps) {
   });
 
   const onSubmit = (data: ForgotEmailInput) => {
-    console.log("forgot-password email", data.email);
     setEmail(data.email);
     setStep(2);
   };

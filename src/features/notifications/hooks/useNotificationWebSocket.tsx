@@ -55,6 +55,8 @@ export function useNotificationWebSocket() {
         .replace(/^https:\/\//, "wss://")
         .replace(/\/api\/v1\/?$/, "")
         .replace(/\/$/, "");
+    } else {
+      wsBase = wsBase.replace(/\/ws\/?$/, "").replace(/\/$/, "");
     }
 
     const wsUrl = `${wsBase}/ws/notifications/?token=${encodeURIComponent(activeToken)}`;

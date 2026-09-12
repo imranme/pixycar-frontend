@@ -254,6 +254,7 @@ export function BiddingDetailsClient({ listing }: BiddingDetailsClientProps) {
                   src={listing.videoUrl}
                   controls
                   playsInline
+                  preload="metadata"
                   className="size-full object-contain mx-auto"
                 />
               </div>

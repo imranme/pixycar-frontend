@@ -21,7 +21,6 @@ export function ActiveOfferCard({ offer }: ActiveOfferCardProps) {
       role="button"
       tabIndex={0}
       onClick={() => {
-        console.log("active offer card click:", offer.id);
         router.push(href);
       }}
       onKeyDown={(e) => {
@@ -78,7 +77,6 @@ export function ActiveOfferCard({ offer }: ActiveOfferCardProps) {
             className="shrink-0 font-navbar text-sm font-semibold text-[#FFA51F] sm:text-base"
             onClick={(e) => {
               e.stopPropagation();
-              console.log("improve offer link:", offer.id);
               router.push(href);
             }}
           >

@@ -52,6 +52,7 @@ export function ActiveOffersView({ listing }: ActiveOffersViewProps) {
                 src={listing.videoUrl}
                 controls
                 playsInline
+                preload="metadata"
                 className="size-full object-contain mx-auto"
               />
             </div>

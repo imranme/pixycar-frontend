@@ -26,7 +26,6 @@ export function LostOfferCard({ offer, onDelete }: LostOfferCardProps) {
         type="button"
         onClick={(e) => {
           e.stopPropagation();
-          console.log("deleted lost offer:", offer.id);
           onDelete(offer.id);
         }}
         className="shrink-0 cursor-pointer rounded-lg p-2 text-[#EF4444] transition hover:bg-red-50"

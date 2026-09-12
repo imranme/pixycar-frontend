@@ -42,7 +42,6 @@ export function AddCardForm({ onSuccess, redirectAfterAdd }: AddCardFormProps) {
   });
 
   const onSubmit = (data: AddDebitCardInput) => {
-    console.log("add-debit-card", data);
     setToast("Card added successfully.");
     window.setTimeout(() => {
       setToast(null);

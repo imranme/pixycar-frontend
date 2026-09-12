@@ -36,7 +36,6 @@ export function PaymentCard({ card, onDelete, editHref, onEditClick }: PaymentCa
         <Link
           href={href}
           onClick={() => {
-            console.log("edit payment card", card.id);
             onEditClick?.();
           }}
           className="flex flex-1 cursor-pointer items-center justify-center rounded-xl bg-[#FFA51F] py-2 text-center font-navbar text-sm font-bold text-[#1E1E1E] transition hover:bg-[#e8940f]"
@@ -46,7 +45,6 @@ export function PaymentCard({ card, onDelete, editHref, onEditClick }: PaymentCa
         <button
           type="button"
           onClick={() => {
-            console.log("delete card", card.id);
             onDelete(card.id);
           }}
           className="flex shrink-0 cursor-pointer items-center justify-center rounded-xl border-2 border-[#FFA51F] bg-white px-3 py-2 text-red-600 transition hover:bg-amber-50"

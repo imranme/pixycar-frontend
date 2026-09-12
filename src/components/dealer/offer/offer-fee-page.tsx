@@ -115,7 +115,6 @@ export function OfferFeePage({ listingId }: OfferFeePageProps) {
       <button
         type="button"
         onClick={() => {
-          console.log("pay & publish click", { listingId });
           setShowConfirm(true);
         }}
         className="mt-8 w-full cursor-pointer rounded-xl bg-[#FFA51F] py-4 font-navbar text-base font-bold text-white shadow-sm transition hover:bg-[#e8940f]"

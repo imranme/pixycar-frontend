@@ -20,7 +20,6 @@ export function OffersFilter({ value, onChange }: OffersFilterProps) {
             key={tab}
             type="button"
             onClick={() => {
-              console.log("my offers tab:", tab);
               onChange(tab);
             }}
             className={cn(

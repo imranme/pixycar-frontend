@@ -92,7 +92,6 @@ export function UnlockChatPageClient({ listing }: UnlockChatPageClientProps) {
               <button
                 type="button"
                 onClick={() => {
-                  console.log("unlock connection click:", listing.id);
                   setShowUnlockModal(true);
                 }}
                 className="w-full cursor-pointer rounded-xl bg-[#FFA51F] py-4 font-navbar text-base font-bold text-[#1E1E1E] transition hover:bg-[#e8940f]"

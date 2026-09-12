@@ -115,7 +115,6 @@ export function PayUnlockPageClient({ listingId }: PayUnlockPageClientProps) {
             card={c}
             editHref={ROUTES.dealer.settingsAddPaymentCard}
             onDelete={(id) => {
-              console.log("delete card", id);
               setCards((prev) => prev.filter((x) => x.id !== id));
             }}
           />

@@ -49,6 +49,8 @@ export function useChatWebSocket(roomId: string | number | null) {
         .replace(/^https:\/\//, "wss://")
         .replace(/\/api\/v1\/?$/, "")
         .replace(/\/$/, "");
+    } else {
+      wsBase = wsBase.replace(/\/ws\/?$/, "").replace(/\/$/, "");
     }
 
     const wsUrl = `${wsBase}/ws/chat/${roomId}/?token=${encodeURIComponent(activeToken)}`;

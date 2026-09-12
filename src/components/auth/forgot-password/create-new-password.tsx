@@ -46,7 +46,6 @@ export function CreateNewPassword({ setStep }: CreateNewPasswordProps) {
   });
 
   const onSubmit = (data: CreateNewPasswordInput) => {
-    console.log("forgot-password new-password", { password: data.password });
     setStep(4);
   };
 

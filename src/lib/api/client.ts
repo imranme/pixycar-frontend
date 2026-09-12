@@ -1,9 +1,15 @@
 import axios from "axios";
 
+function getApiBaseUrl(): string {
+  const envUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8005';
+  const trimmed = envUrl.replace(/\/+$/, '');
+  if (trimmed.endsWith('/api/v1')) return trimmed;
+  if (trimmed.endsWith('/api')) return `${trimmed}/v1`;
+  return `${trimmed}/api/v1`;
+}
+
 export const apiClient = axios.create({
-  baseURL:
-    process.env.NEXT_PUBLIC_API_URL ||
-    "https://particularistically-transelementary-owen.ngrok-free.dev/api/v1",
+  baseURL: getApiBaseUrl(),
   headers: {
     "Content-Type": "application/json",
   },

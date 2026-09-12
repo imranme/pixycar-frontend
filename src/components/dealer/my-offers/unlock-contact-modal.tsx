@@ -16,7 +16,6 @@ export function UnlockContactModal({ open, onClose, onConfirm }: UnlockContactMo
         aria-label="Close"
         className="absolute inset-0 cursor-pointer bg-black/50"
         onClick={() => {
-          console.log("unlock contact modal: cancel (backdrop)");
           onClose();
         }}
       />
@@ -37,7 +36,6 @@ export function UnlockContactModal({ open, onClose, onConfirm }: UnlockContactMo
           <button
             type="button"
             onClick={() => {
-              console.log("unlock contact modal: cancel");
               onClose();
             }}
             className="flex-1 cursor-pointer rounded-xl border-2 border-[#FFA51F] py-3 font-navbar text-sm font-bold text-[#FFA51F] transition hover:bg-amber-50"
@@ -47,7 +45,6 @@ export function UnlockContactModal({ open, onClose, onConfirm }: UnlockContactMo
           <button
             type="button"
             onClick={() => {
-              console.log("unlock contact modal: confirm");
               onConfirm();
             }}
             className="flex-1 cursor-pointer rounded-xl bg-[#FFA51F] py-3 font-navbar text-sm font-bold text-[#1E1E1E] transition hover:bg-[#e8940f]"

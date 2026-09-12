@@ -58,6 +58,12 @@ const authSlice = createSlice({
         localStorage.setItem('pixycar_access_token', accessToken);
         localStorage.setItem('pixycar_refresh_token', refreshToken);
         localStorage.setItem('pixycar_user', JSON.stringify(user));
+
+        // ── Set lightweight cookies so Next.js Middleware can read auth status ──
+        // These cookies only carry role/auth flag, NOT the actual JWT token.
+        const maxAge = 60 * 60 * 24 * 7; // 7 days in seconds
+        document.cookie = `pixycar_auth=1; path=/; max-age=${maxAge}; SameSite=Lax`;
+        document.cookie = `pixycar_role=${user.role}; path=/; max-age=${maxAge}; SameSite=Lax`;
       }
     },
     logout: (state) => {
@@ -70,6 +76,10 @@ const authSlice = createSlice({
         localStorage.removeItem('pixycar_access_token');
         localStorage.removeItem('pixycar_refresh_token');
         localStorage.removeItem('pixycar_user');
+
+        // ── Clear auth cookies so Middleware blocks access immediately ────────
+        document.cookie = 'pixycar_auth=; path=/; max-age=0; SameSite=Lax';
+        document.cookie = 'pixycar_role=; path=/; max-age=0; SameSite=Lax';
       }
     },
     updateUser: (state, action: PayloadAction<Partial<AuthUser>>) => {

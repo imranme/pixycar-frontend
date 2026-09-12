@@ -8,8 +8,15 @@ import {
 import type { RootState } from '../index';
 import { setCredentials, logout } from '../features/auth/authSlice';
 
-const apiEnvUrl = process.env.NEXT_PUBLIC_API_URL ?? 'https://particularistically-transelementary-owen.ngrok-free.dev';
-const BASE_URL = `${apiEnvUrl.replace(/\/$/, '')}/api/v1`;
+function getApiBaseUrl(): string {
+  const envUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8005';
+  const trimmed = envUrl.replace(/\/+$/, '');
+  if (trimmed.endsWith('/api/v1')) return trimmed;
+  if (trimmed.endsWith('/api')) return `${trimmed}/v1`;
+  return `${trimmed}/api/v1`;
+}
+
+const BASE_URL = getApiBaseUrl();
 
 /* ── Base query with auth header ── */
 const rawBaseQuery = fetchBaseQuery({

@@ -106,28 +106,54 @@ function resolveColor(c: ConditionDetailsValues): string {
 }
 
 function buildApiPayload(
-  vehicle: VehicleInfoValues,
-  condition: ConditionDetailsValues
+  vehicle: VehicleInfoValues = {} as VehicleInfoValues,
+  condition: ConditionDetailsValues = {} as ConditionDetailsValues
 ): CreateVehicleListingRequest {
+  const safeVin = (vehicle?.vin || "").trim();
+  const safeYear = Number(vehicle?.year || new Date().getFullYear());
+  const safeMake = (vehicle?.make || "Toyota").trim();
+  const safeModel = (vehicle?.model || "Camry").trim();
+  const safeTrim = (vehicle?.trim || "").trim();
+  const safeMileage = Number(String(condition?.mileage || "0").replace(/,/g, ""));
+  const safeColor = resolveColor(condition || {});
+  
+  const rawBodyType = condition?.bodyType || "Sedan";
+  const safeBodyType = BODY_TYPE_MAP[rawBodyType] ?? (rawBodyType ? rawBodyType.toUpperCase() : "SEDAN");
+
+  const rawOwnership = condition?.ownershipStatus || "Owned";
+  const safeOwnership = OWNERSHIP_MAP[rawOwnership] ?? (rawOwnership ? rawOwnership.toUpperCase() : "OWNED");
+
+  const rawTire = condition?.tireCondition || "Good";
+  const safeTire = TIRE_MAP[rawTire] ?? (rawTire ? rawTire.toUpperCase() : "GOOD");
+
+  const rawDrivetrain = condition?.drivetrain || "FWD";
+  const safeDrivetrain = DRIVETRAIN_MAP[rawDrivetrain] ?? (rawDrivetrain ? rawDrivetrain.toUpperCase() : "FWD");
+
+  const rawTitle = condition?.titleStatus || "Clean Title";
+  const safeTitle = TITLE_STATUS_MAP[rawTitle] ?? rawTitle;
+
+  const rawMechanical = condition?.mechanicalCondition || "Good";
+  const safeMechanical = MECHANICAL_MAP[rawMechanical] ?? rawMechanical;
+
   return {
-    registration_number: vehicle.vin.trim(),
-    year: Number(vehicle.year),
-    make: vehicle.make.trim(),
-    model: vehicle.model.trim(),
-    trim: vehicle.trim.trim(),
-    mileage: Number(condition.mileage.replace(/,/g, "")),
-    color: resolveColor(condition),
-    body_type: BODY_TYPE_MAP[condition.bodyType] ?? condition.bodyType.toUpperCase(),
-    ownership_status: OWNERSHIP_MAP[condition.ownershipStatus] ?? condition.ownershipStatus.toUpperCase(),
-    number_of_keys: Number(condition.numberOfKeys),
-    tire_condition: TIRE_MAP[condition.tireCondition] ?? condition.tireCondition.toUpperCase(),
-    drivetrain: DRIVETRAIN_MAP[condition.drivetrain] ?? condition.drivetrain.toUpperCase(),
-    has_accident_history: Boolean(condition.accidentHistory),
-    is_drivable: Boolean(condition.drivable),
-    description: condition.shortDescription?.trim() || "Mint condition, fresh interior, single hand driven.",
-    title_status: TITLE_STATUS_MAP[condition.titleStatus] ?? condition.titleStatus,
-    mechanical_condition: MECHANICAL_MAP[condition.mechanicalCondition] ?? condition.mechanicalCondition,
-    options: condition.features ?? [],
+    registration_number: safeVin || "VIN123456789",
+    year: safeYear,
+    make: safeMake,
+    model: safeModel,
+    trim: safeTrim,
+    mileage: safeMileage,
+    color: safeColor || "Black",
+    body_type: safeBodyType,
+    ownership_status: safeOwnership,
+    number_of_keys: Number(condition?.numberOfKeys || 1),
+    tire_condition: safeTire,
+    drivetrain: safeDrivetrain,
+    has_accident_history: Boolean(condition?.accidentHistory),
+    is_drivable: Boolean(condition?.drivable ?? true),
+    description: condition?.shortDescription?.trim() || "Mint condition, fresh interior, single hand driven.",
+    title_status: safeTitle,
+    mechanical_condition: safeMechanical,
+    options: condition?.features ?? [],
     payment_method_id: "pm_mock_12345",
   };
 }

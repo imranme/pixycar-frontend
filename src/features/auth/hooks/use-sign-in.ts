@@ -28,7 +28,14 @@ export function useSignIn() {
       options?.onSuccess?.(response);
     } catch (err: any) {
       let errorMsg = "Login failed. Please check your credentials.";
-      if (err?.data) {
+      if (typeof err?.data === 'string') {
+        // If the backend returned a string or HTML error
+        if (err.data.includes('<html') || err.data.includes('<!DOCTYPE')) {
+          errorMsg = "Unable to connect to server. Please ensure the backend is running.";
+        } else {
+          errorMsg = err.data;
+        }
+      } else if (err?.data && typeof err.data === 'object') {
         const data = err.data;
         if (typeof data.detail === 'string') {
           errorMsg = data.detail;

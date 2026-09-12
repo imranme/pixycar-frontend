@@ -31,7 +31,6 @@ export default function DealerPaymentMethodsPage() {
             card={card}
             editHref={ROUTES.dealer.settingsAddPaymentCard}
             onDelete={(id) => {
-              console.log("delete payment card", id);
               setCards((c) => c.filter((x) => x.id !== id));
             }}
           />
@@ -40,7 +39,6 @@ export default function DealerPaymentMethodsPage() {
 
       <Link
         href={ROUTES.dealer.settingsAddPaymentCard}
-        onClick={() => console.log("add more payment methods")}
         className="mt-6 flex w-full cursor-pointer items-center justify-center rounded-xl bg-[#FFA51F] py-3 font-navbar text-base font-bold text-[#1E1E1E] transition hover:bg-[#e8940f]"
       >
         Add More

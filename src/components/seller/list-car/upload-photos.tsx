@@ -137,11 +137,6 @@ export function UploadPhotos({ initial, onBack, onContinue }: UploadPhotosProps)
     }
     setError(null);
     const payload: PhotosFormValues = { slots, extras, video };
-    console.log(
-      "list-car photos",
-      PHOTO_SLOT_KEYS.map((k) => ({ slot: k, file: slots[k] ? fileSummary(slots[k]!) : null })),
-      { extras: extras.map(fileSummary), video: video ? fileSummary(video) : null }
-    );
     onContinue(payload);
   };
 

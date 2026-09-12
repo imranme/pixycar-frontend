@@ -222,6 +222,7 @@ export function ListingDetailView() {
                     src={listing.video_file}
                     controls
                     playsInline
+                    preload="metadata"
                     className="size-full object-contain mx-auto"
                   />
                 </div>
