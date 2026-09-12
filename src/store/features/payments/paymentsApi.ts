@@ -16,7 +16,12 @@ export const paymentsApi = baseApi.injectEndpoints({
     }),
     verifyStripeSession: builder.query<VerifySessionResponse, string>({
       query: (sessionId) => `/payments/stripe/verify-session/?session_id=${sessionId}`,
-      invalidatesTags: ['Listings', 'Communication'],
+      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          dispatch(baseApi.util.invalidateTags(['Listings', 'Communication']));
+        } catch {}
+      },
     }),
   }),
   overrideExisting: true,
