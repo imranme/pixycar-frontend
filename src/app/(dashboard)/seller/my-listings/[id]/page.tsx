@@ -132,6 +132,22 @@ export default function SellerListingDetailPage() {
     offers: offersList,
     timerSeconds: apiListing.time_remaining_seconds,
     expiresAt: apiListing.expires_at || undefined,
+    year: apiListing.year,
+    make: apiListing.make,
+    model: apiListing.model,
+    trim: apiListing.trim,
+    color: apiListing.color,
+    bodyType: apiListing.body_type,
+    ownershipStatus: apiListing.ownership_status,
+    numberOfKeys: apiListing.number_of_keys,
+    tireCondition: apiListing.tire_condition,
+    drivetrain: apiListing.drivetrain,
+    hasAccidentHistory: apiListing.has_accident_history,
+    isDrivable: apiListing.is_drivable,
+    description: apiListing.description,
+    mechanicalCondition: apiListing.mechanical_condition,
+    registrationNumber: apiListing.registration_number,
+    options: apiListing.options,
   };
 
   const isTimeOverWithoutOffers = effectiveStatus === "TimeOver" && listing.offers.length === 0;

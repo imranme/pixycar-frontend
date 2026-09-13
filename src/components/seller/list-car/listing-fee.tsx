@@ -244,7 +244,7 @@ export function ListingFee({ formData, onBack }: ListingFeeProps) {
         </span>
       </div>
       <p className="mt-2 max-w-2xl font-navbar text-sm text-[#5E5E5E] sm:text-base">
-        If you receive no offers within 1 Hrs, we&apos;ll automatically refund your listing fee within 24 hours.
+        If you receive no offers within 24 hrs, we&apos;ll automatically refund your listing fee.
       </p>
 
       <div className="mx-auto mt-8 w-full max-w-lg space-y-6 rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-sm sm:p-8">

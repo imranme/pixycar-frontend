@@ -160,18 +160,35 @@ export function ReviewPublish({
               </label>
             ))}
 
-            <div className="flex items-start gap-3 rounded-xl border border-[#E5E7EB] bg-neutral-50/80 px-4 py-3">
+            <div
+              className="flex cursor-pointer items-start gap-3 rounded-xl border border-[#E5E7EB] bg-neutral-50/80 px-4 py-3"
+              onClick={() => {
+                if (!values.terms) {
+                  setTermsOpen(true);
+                }
+              }}
+            >
               <input
                 type="checkbox"
                 className="mt-1 size-4 shrink-0 rounded border-[#E5E7EB] accent-[#FFA51F]"
-                {...register("terms")}
+                checked={values.terms}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setTermsOpen(true);
+                  } else {
+                    setValue("terms", false, { shouldValidate: true });
+                  }
+                }}
               />
               <span className="font-navbar text-sm text-[#1E1E1E]">
                 I agree to the{" "}
                 <button
                   type="button"
                   className="cursor-pointer font-semibold text-[#FFA51F] hover:underline"
-                  onClick={() => setTermsOpen(true)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setTermsOpen(true);
+                  }}
                 >
                   Terms of Use
                 </button>{" "}

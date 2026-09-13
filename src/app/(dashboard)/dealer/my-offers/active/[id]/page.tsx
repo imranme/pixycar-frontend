@@ -4,8 +4,8 @@ import { use } from "react";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { ROUTES } from "@/constants/routes";
-import { getDealerBiddingListing, type DealerBiddingListing } from "@/components/dealer/dealer-dummy-data";
-import { getActiveOfferBidState, type ActiveOfferBidState } from "@/components/dealer/my-offers/dealer-my-offers-data";
+import type { DealerBiddingListing } from "@/components/dealer/dealer-dummy-data";
+import type { ActiveOfferBidState } from "@/components/dealer/my-offers/dealer-my-offers-data";
 import { ActiveOfferDetailClient } from "@/components/dealer/my-offers/active-offer-detail-client";
 import { useGetListingByIdQuery, useGetMyRankQuery } from "@/store/features/listings/listingsApi";
 
@@ -16,6 +16,7 @@ type PageProps = {
 export default function DealerActiveOfferPage({ params }: PageProps) {
   const { id } = use(params);
   const { data: apiListing, isLoading } = useGetListingByIdQuery(id);
+  const { data: myRankData } = useGetMyRankQuery(id);
 
   if (isLoading) {
     return (
@@ -62,8 +63,6 @@ export default function DealerActiveOfferPage({ params }: PageProps) {
       totalOffers: l.total_offers ?? 0,
     };
   }
-
-  const { data: myRankData } = useGetMyRankQuery(id);
 
   const reserveOrZero = Number((apiListing as any)?.reserve_price || 0);
   const rawHighest = Number((apiListing as any)?.current_highest_bid || myRankData?.amount || reserveOrZero);

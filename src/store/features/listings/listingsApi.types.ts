@@ -81,6 +81,8 @@ export interface MarketplaceListing {
   has_accident_history: boolean;
   is_drivable: boolean;
   description: string;
+  mechanical_condition?: string;
+  options?: string[];
   video_file: string | null;
   images: string[];
   status: string;

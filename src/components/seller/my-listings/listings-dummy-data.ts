@@ -25,6 +25,22 @@ export type SellerListingDetail = {
   /** Initial countdown total seconds (Active view). */
   timerSeconds?: number;
   expiresAt?: string;
+  year?: number;
+  make?: string;
+  model?: string;
+  trim?: string;
+  color?: string;
+  bodyType?: string;
+  ownershipStatus?: string;
+  numberOfKeys?: number;
+  tireCondition?: string;
+  drivetrain?: string;
+  hasAccidentHistory?: boolean;
+  isDrivable?: boolean;
+  description?: string;
+  mechanicalCondition?: string;
+  registrationNumber?: string;
+  options?: string[];
 };
 
 const CAR_IMG =
