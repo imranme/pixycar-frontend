@@ -89,21 +89,7 @@ export function ActiveOfferDetailClient({ listing, bid }: ActiveOfferDetailClien
 
   const handleConfirmImproveOffer = async (amount: number) => {
     try {
-      const baseUrl = typeof window !== "undefined" ? window.location.origin : "http://localhost:3000";
-      const stripeRes = await createCheckout({
-        payment_type: "BID_FEE" as any,
-        listing_id: Number(listing.id),
-        bid_amount: String(amount),
-        success_url: `${baseUrl}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${baseUrl}/dealer/my-offers/${listing.id}`,
-      }).unwrap();
-
-      if (stripeRes?.checkout_url) {
-        window.location.href = stripeRes.checkout_url;
-        return;
-      }
-
-      const res = await placeBidMutation({
+      await placeBidMutation({
         listing_id: listing.id,
         amount: amount,
       }).unwrap();
@@ -114,21 +100,9 @@ export function ActiveOfferDetailClient({ listing, bid }: ActiveOfferDetailClien
       });
       setShowImproveModal(false);
     } catch (err: any) {
-      console.error("Stripe improve offer checkout failed, falling back:", err);
-      try {
-        const res = await placeBidMutation({
-          listing_id: listing.id,
-          amount: amount,
-        }).unwrap();
-        setToast({
-          message: `Your offer has been updated to $${amount.toLocaleString("en-US")}!`,
-          type: "success",
-        });
-        setShowImproveModal(false);
-      } catch (fallbackErr: any) {
-        const errMsg = fallbackErr?.data?.message || fallbackErr?.data?.detail || err?.data?.detail || "Could not update offer. Please try again.";
-        setToast({ message: errMsg, type: "error" });
-      }
+      console.error("Improve offer failed:", err);
+      const errMsg = err?.data?.message || err?.data?.detail || "Could not update offer. Please try again.";
+      setToast({ message: errMsg, type: "error" });
     }
   };
 
