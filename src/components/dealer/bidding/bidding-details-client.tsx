@@ -112,6 +112,16 @@ export function BiddingDetailsClient({ listing }: BiddingDetailsClientProps) {
         cancel_url: `${baseUrl}/dealer/bidding/${listing.id}`,
       }).unwrap();
 
+      // ── One-time payment: already paid for this car ──────────────────────
+      if ((stripeRes as any)?.already_paid) {
+        setToast({
+          message: `Your offer has been updated to $${numAmount.toLocaleString("en-US")}!`,
+          type: "success",
+        });
+        return;
+      }
+      // ────────────────────────────────────────────────────────────────────
+
       if (stripeRes?.checkout_url) {
         window.location.href = stripeRes.checkout_url;
         return;
@@ -146,7 +156,32 @@ export function BiddingDetailsClient({ listing }: BiddingDetailsClientProps) {
 
   const handleConfirmImproveOffer = async (amount: number) => {
     try {
-      await placeBidMutation({
+      const baseUrl = typeof window !== "undefined" ? window.location.origin : "http://localhost:3000";
+      const stripeRes = await createCheckout({
+        payment_type: "BID_FEE" as any,
+        listing_id: Number(listing.id),
+        bid_amount: String(amount),
+        success_url: `${baseUrl}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${baseUrl}/dealer/bidding/${listing.id}`,
+      }).unwrap();
+
+      // ── One-time payment: already paid for this car ──────────────────────
+      if ((stripeRes as any)?.already_paid) {
+        setToast({
+          message: `Your offer has been improved to $${amount.toLocaleString("en-US")}!`,
+          type: "success",
+        });
+        setShowImproveModal(false);
+        return;
+      }
+      // ────────────────────────────────────────────────────────────────────
+
+      if (stripeRes?.checkout_url) {
+        window.location.href = stripeRes.checkout_url;
+        return;
+      }
+
+      const res = await placeBidMutation({
         listing_id: listing.id,
         amount: amount,
       }).unwrap();
@@ -157,9 +192,21 @@ export function BiddingDetailsClient({ listing }: BiddingDetailsClientProps) {
       });
       setShowImproveModal(false);
     } catch (err: any) {
-      console.error("Improve offer failed:", err);
-      const errMsg = err?.data?.message || err?.data?.detail || "Could not improve offer. Please try again.";
-      setToast({ message: errMsg, type: "error" });
+      console.error("Stripe improve bid failed, falling back:", err);
+      try {
+        const res = await placeBidMutation({
+          listing_id: listing.id,
+          amount: amount,
+        }).unwrap();
+        setToast({
+          message: `Your offer has been improved to $${amount.toLocaleString("en-US")}!`,
+          type: "success",
+        });
+        setShowImproveModal(false);
+      } catch (fallbackErr: any) {
+        const errMsg = fallbackErr?.data?.message || fallbackErr?.data?.detail || err?.data?.detail || "Could not improve offer. Please try again.";
+        setToast({ message: errMsg, type: "error" });
+      }
     }
   };
 
@@ -171,11 +218,10 @@ export function BiddingDetailsClient({ listing }: BiddingDetailsClientProps) {
       {/* Toast Notification */}
       {toast ? (
         <div
-          className={`fixed bottom-6 left-1/2 z-[160] flex w-[min(90vw,420px)] -translate-x-1/2 items-center gap-2.5 rounded-xl border px-4 py-3 text-sm font-navbar font-semibold shadow-xl transition-all ${
-            toast.type === "success"
+          className={`fixed bottom-6 left-1/2 z-[160] flex w-[min(90vw,420px)] -translate-x-1/2 items-center gap-2.5 rounded-xl border px-4 py-3 text-sm font-navbar font-semibold shadow-xl transition-all ${toast.type === "success"
               ? "border-emerald-200 bg-emerald-50 text-emerald-900"
               : "border-red-200 bg-red-50 text-red-900"
-          }`}
+            }`}
           role="status"
         >
           {toast.type === "success" && <CheckCircle2 className="size-5 text-emerald-600 shrink-0" />}

@@ -46,7 +46,6 @@ export function OfferFeePage({ listingId }: OfferFeePageProps) {
   const handleConfirm = async () => {
     try {
       setShowConfirm(false);
-      setToast("Redirecting to Stripe Checkout…");
       const baseUrl = window.location.origin;
       const res = await createCheckout({
         payment_type: "BID_FEE",
@@ -56,7 +55,16 @@ export function OfferFeePage({ listingId }: OfferFeePageProps) {
         cancel_url: `${baseUrl}/dealer/my-offers`,
       }).unwrap();
 
+      // ── One-time payment: already paid for this car ──────────────────────
+      if ((res as any)?.already_paid) {
+        setToast("Offer updated successfully! No additional payment required.");
+        setTimeout(() => router.push(ROUTES.dealer.myOffers), 1800);
+        return;
+      }
+      // ────────────────────────────────────────────────────────────────────
+
       if (res.checkout_url) {
+        setToast("Redirecting to Stripe Checkout…");
         window.location.href = res.checkout_url;
       }
     } catch (err: any) {
