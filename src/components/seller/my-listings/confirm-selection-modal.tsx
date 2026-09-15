@@ -56,7 +56,6 @@ export function ConfirmSelectionModal({
           <ul className="mt-2 list-inside list-disc space-y-1 font-navbar text-sm text-emerald-800">
             <li>Unlock chat with this dealer</li>
             <li>Share your contact information</li>
-            <li>Notify other dealers</li>
           </ul>
         </div>
 

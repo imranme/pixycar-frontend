@@ -77,12 +77,23 @@ export default function SellerListingDetailPage() {
     return num > max ? num : max;
   }, 0);
 
-  // Map to OfferRowData with correct isHighest calculation
+  // Determine if the auction is still running (before isTimeOver is declared below)
+  const auctionIsActive =
+    apiListing.status === "ACTIVE" &&
+    (apiListing.time_remaining_seconds === undefined || Number(apiListing.time_remaining_seconds) > 0) &&
+    (!apiListing.expires_at || new Date(apiListing.expires_at).getTime() > Date.now());
+
+  // Map to OfferRowData with correct isHighest calculation.
+  // During an ACTIVE auction the seller must NOT see real dealer names — show "Dealer 1", "Dealer 2" etc.
+  // After the auction ends the backend already reveals real names, so we use dealer_name directly.
   const offersList: OfferRowData[] = rawOffers.map((offer: any, index: number) => {
     const numAmount = Number(offer.amount) || 0;
+    const displayName = auctionIsActive
+      ? `Dealer ${index + 1}`
+      : offer.dealer_name || `Dealer ${index + 1}`;
     return {
       id: offer.id ?? index,
-      dealerId: offer.dealer_name || `Dealer #${offer.dealer_id || index + 1}`,
+      dealerId: displayName,
       dealerNumericId: offer.dealer_id || offer.dealer?.id,
       timeAgo: offer.placed_at ? formatRelativeTime(offer.placed_at) : "Recently",
       amount: `$${numAmount.toLocaleString()}`,
