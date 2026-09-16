@@ -257,22 +257,53 @@ export function ActiveOfferDetailClient({ listing, bid }: ActiveOfferDetailClien
             </p>
           </div>
 
-          {/* Quick Adjust Buttons */}
-          <QuickAdjust
-            options={quickOptions}
-            onSelect={(amount) => handleOpenImproveModal(amount)}
-            onAddCustom={() => handleOpenImproveModal(minToLead)}
-          />
+          {listing.phase === "timeOver" || (bid.initialSecondsRemaining !== undefined && bid.initialSecondsRemaining <= 0) ? (
+            <div className="flex flex-col gap-3 rounded-2xl border border-amber-200 bg-amber-50/70 p-5 shadow-xs">
+              {position === 1 ? (
+                <>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="size-5 text-emerald-600 shrink-0" />
+                    <p className="font-hero-heading text-lg font-bold text-[#1E1E1E]">Auction Won!</p>
+                  </div>
+                  <p className="font-navbar text-sm text-[#5E5E5E]">
+                    Your offer of ${myOfferAmount.toLocaleString("en-US")} won this vehicle. You can now initiate contact directly with the seller to arrange handover.
+                  </p>
+                  <Link
+                    href={ROUTES.dealer.myOffersUnlockChat(listing.id)}
+                    className="mt-1 flex w-full cursor-pointer items-center justify-center rounded-xl bg-[#FFA51F] py-3.5 font-navbar text-base font-bold text-[#1E1E1E] transition hover:bg-[#e8940f] shadow-sm"
+                  >
+                    Contact Seller • Unlock Connection ($69.95)
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <p className="font-hero-heading text-lg font-bold text-[#1E1E1E]">Auction Ended</p>
+                  <p className="font-navbar text-sm text-[#5E5E5E]">
+                    This auction has closed and another dealer held the winning bid.
+                  </p>
+                </>
+              )}
+            </div>
+          ) : (
+            <>
+              {/* Quick Adjust Buttons */}
+              <QuickAdjust
+                options={quickOptions}
+                onSelect={(amount) => handleOpenImproveModal(amount)}
+                onAddCustom={() => handleOpenImproveModal(minToLead)}
+              />
 
-          {/* Improve Offer Button */}
-          <button
-            type="button"
-            disabled={isSubmittingBid}
-            onClick={() => handleOpenImproveModal(minToLead)}
-            className="w-full cursor-pointer rounded-xl bg-[#FFA51F] py-3.5 sm:py-4 text-center font-navbar text-base font-bold text-[#1E1E1E] transition hover:bg-[#e8940f] active:bg-[#d88709] shadow-sm disabled:cursor-not-allowed disabled:bg-neutral-200 disabled:text-neutral-500"
-          >
-            Improve Offer
-          </button>
+              {/* Improve Offer Button */}
+              <button
+                type="button"
+                disabled={isSubmittingBid}
+                onClick={() => handleOpenImproveModal(minToLead)}
+                className="w-full cursor-pointer rounded-xl bg-[#FFA51F] py-3.5 sm:py-4 text-center font-navbar text-base font-bold text-[#1E1E1E] transition hover:bg-[#e8940f] active:bg-[#d88709] shadow-sm disabled:cursor-not-allowed disabled:bg-neutral-200 disabled:text-neutral-500"
+              >
+                Improve Offer
+              </button>
+            </>
+          )}
         </div>
       </div>
 

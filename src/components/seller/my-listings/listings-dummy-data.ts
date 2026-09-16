@@ -8,6 +8,8 @@ export type OfferRowData = {
   amount: string;
   numericAmount?: number;
   isHighest?: boolean;
+  distance?: string;
+  location?: string;
 };
 
 export type SellerListingDetail = {

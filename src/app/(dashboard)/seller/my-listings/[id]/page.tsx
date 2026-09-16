@@ -99,6 +99,8 @@ export default function SellerListingDetailPage() {
       amount: `$${numAmount.toLocaleString()}`,
       numericAmount: numAmount,
       isHighest: maxBidAmount > 0 && numAmount === maxBidAmount,
+      distance: offer.distance_display || (offer.distance_miles ? `${offer.distance_miles} mi away` : undefined),
+      location: offer.dealer_location || undefined,
     };
   });
 

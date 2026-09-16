@@ -1,11 +1,14 @@
 "use client";
 
 import { useEffect } from "react";
+import { MapPin } from "lucide-react";
 
 type ConfirmSelectionModalProps = {
   open: boolean;
   dealerName: string;
   amount: string;
+  distance?: string;
+  location?: string;
   isLoading?: boolean;
   onClose: () => void;
   onConfirm: () => void;
@@ -15,6 +18,8 @@ export function ConfirmSelectionModal({
   open,
   dealerName,
   amount,
+  distance,
+  location,
   isLoading = false,
   onClose,
   onConfirm,
@@ -48,7 +53,18 @@ export function ConfirmSelectionModal({
         <h2 id="confirm-selection-title" className="font-hero-heading text-xl font-bold text-[#1E1E1E]">
           Confirm Selection
         </h2>
-        <p className="mt-3 font-navbar text-sm text-[#5E5E5E]">{dealerName}</p>
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <p className="font-navbar text-sm font-semibold text-[#1E1E1E]">{dealerName}</p>
+          {distance && (
+            <span className="inline-flex items-center gap-1 rounded-md bg-amber-50 px-2 py-0.5 font-navbar text-xs font-medium text-amber-800 border border-amber-200">
+              <MapPin className="size-3 text-amber-600 shrink-0" />
+              {distance}
+            </span>
+          )}
+        </div>
+        {location && (
+          <p className="mt-0.5 font-navbar text-xs text-[#5E5E5E]">{location}</p>
+        )}
         <p className="mt-1 font-hero-heading text-3xl font-bold text-[#1E1E1E] sm:text-4xl">{amount}</p>
 
         <div className="mt-6 rounded-xl border border-emerald-300 bg-emerald-50/90 p-4">

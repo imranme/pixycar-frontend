@@ -118,6 +118,8 @@ export function OfferingCompleteView({ listing }: OfferingCompleteViewProps) {
                   timeAgo={o.timeAgo}
                   amount={o.amount}
                   isHighest={o.isHighest}
+                  distance={o.distance}
+                  location={o.location}
                   layout="list"
                 />
               </button>
@@ -160,6 +162,8 @@ export function OfferingCompleteView({ listing }: OfferingCompleteViewProps) {
         open={showModal}
         dealerName={selectedDealer?.dealerId ?? ""}
         amount={selectedDealer?.amount ?? ""}
+        distance={selectedDealer?.distance}
+        location={selectedDealer?.location}
         isLoading={isConfirming}
         onClose={() => setShowModal(false)}
         onConfirm={handleConfirm}

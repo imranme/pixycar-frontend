@@ -37,6 +37,17 @@ export const communicationApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: (_res, _err, threadId) => ['Communication', { type: 'Communication', id: threadId }],
     }),
+    initiateContact: builder.mutation<
+      { detail: string; thread_id: number; is_unlocked: boolean; listing_id: number; thread?: any },
+      number | string
+    >({
+      query: (listingId) => ({
+        url: `/communication/threads/initiate/`,
+        method: 'POST',
+        body: { listing_id: Number(listingId) },
+      }),
+      invalidatesTags: ['Communication'],
+    }),
   }),
   overrideExisting: true,
 });
@@ -46,4 +57,5 @@ export const {
   useGetThreadMessagesQuery,
   useSendMessageMutation,
   useUnlockChatMutation,
+  useInitiateContactMutation,
 } = communicationApi;
