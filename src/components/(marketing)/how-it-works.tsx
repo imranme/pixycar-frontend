@@ -23,7 +23,7 @@ const sellerSteps: StepItem[] = [
     stepLabel: "Step 01",
     title: "List Your Car",
     description:
-      "Create a detailed listing with photos, specs, and your asking price. Pay a refundable $4.95 listing fee.",
+      "Create a detailed listing with photos, specs, and your asking price. Pay a $4.95 non-refundable Listing Access Fee.",
     Icon: CarFront,
     iconBoxClass: "bg-indigo-100",
     iconClass: "text-indigo-600",

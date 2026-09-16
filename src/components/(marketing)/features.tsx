@@ -37,9 +37,9 @@ const featuresRow1: FeatureCardData[] = [
     Icon: DollarSign,
     iconBoxClass: "bg-[#F0FDF4]",
     iconClass: "text-green-600",
-    title: "Refundable Listing Fee",
+    title: "Listing Access Fee",
     description:
-      "Your $4.95 listing fee is 100% refundable if no offers are received. We only win when you win.",
+      "A nominal $4.95 Listing Access Fee gives you direct access to our network of verified dealers competing with live offers.",
   },
 ];
 

@@ -1,7 +1,7 @@
 export const AUTH_CHECKLIST = [
   "Blind offers protect sellers from low-balls",
   "Verified dealer network",
-  "$4.95 refundable listing fee",
+  "$4.95 Listing Access Fee",
   "Real-time offer tracking",
 ] as const;
 

@@ -63,6 +63,7 @@ function SellerMessagesContent() {
         unread: t.unread_count || 0,
         unreadCount: t.unread_count || 0,
         badge: t.is_unlocked ? undefined : "Unlock Required",
+        isUnlocked: Boolean(t.is_unlocked),
         biddingSoldListingId: String(t.listing_id || t.listing || t.id),
         messages: [],
       };
@@ -269,6 +270,7 @@ function SellerMessagesContent() {
             dealerPartyInitial={activeConvo.dealerInitial}
             sellerPartyInitial="S"
             isPartnerTyping={isPartnerTyping}
+            isUnlocked={activeConvo.isUnlocked}
           />
         </section>
       </div>

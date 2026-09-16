@@ -238,13 +238,13 @@ export function ListingFee({ formData, onBack }: ListingFeeProps) {
   return (
     <div>
       <div className="flex flex-wrap items-center gap-3">
-        <h1 className="font-hero-heading text-2xl font-bold text-[#1E1E1E] sm:text-3xl">Listing Fee</h1>
+        <h1 className="font-hero-heading text-2xl font-bold text-[#1E1E1E] sm:text-3xl">Listing Access Fee</h1>
         <span className="rounded-full bg-neutral-200 px-3 py-1 font-navbar text-xs font-medium text-[#5E5E5E]">
-          100% Refundable
+          Non-Refundable
         </span>
       </div>
       <p className="mt-2 max-w-2xl font-navbar text-sm text-[#5E5E5E] sm:text-base">
-        If you receive no offers within 24 hrs, we&apos;ll automatically refund your listing fee.
+        This $4.95 Listing Access Fee gives you direct access to publish your vehicle to verified dealers across our platform.
       </p>
 
       <div className="mx-auto mt-8 w-full max-w-lg space-y-6 rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-sm sm:p-8">
@@ -255,7 +255,7 @@ export function ListingFee({ formData, onBack }: ListingFeeProps) {
           <ul className="mt-2 list-inside list-disc space-y-1 font-navbar text-sm text-violet-900">
             <li>Multiple offers from verified dealers</li>
             <li>Direct chat with winning dealer</li>
-            <li>Full refund if no offers received</li>
+            <li>Free 24h re-list window if no initial offers are accepted</li>
           </ul>
         </div>
 
