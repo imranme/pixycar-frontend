@@ -32,12 +32,12 @@ export function BiddingDetailsClient({ listing }: BiddingDetailsClientProps) {
   const [showImproveModal, setShowImproveModal] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
-  // Auction timer hook to determine phase: 50min Blind vs Last 10min Open
+  // Auction timer hook to determine phase: 110min Blind vs Last 10min Open
   const { secondsLeft, isFinal10Min, isTimeOver } = useAuctionTimer({
     expiresAt: listing.expiresAt,
     timeRemainingSeconds: listing.timeRemainingSeconds,
     isLive: listing.phase === "active",
-    totalDurationSeconds: 3600,
+    totalDurationSeconds: 7200,
   });
 
   const hasPlacedBid = Boolean(myRankData?.amount && Number(myRankData.amount) > 0);

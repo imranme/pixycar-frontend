@@ -32,7 +32,7 @@ export function formatAuctionCountdown(totalSeconds: number): string {
 export function useAuctionTimer({
   expiresAt,
   timeRemainingSeconds,
-  totalDurationSeconds = 3600, // Default 1 hour (3600s)
+  totalDurationSeconds = 7200, // Default 2 hours (7200s)
   isLive = true,
 }: UseAuctionTimerOptions): AuctionTimerState {
   // Compute initial target end timestamp (milliseconds)
@@ -46,7 +46,7 @@ export function useAuctionTimer({
     if (typeof timeRemainingSeconds === "number" && !isNaN(timeRemainingSeconds)) {
       return Date.now() + Math.max(0, timeRemainingSeconds) * 1000;
     }
-    return Date.now() + 3600 * 1000;
+    return Date.now() + 7200 * 1000;
   };
 
   const targetEndTimeRef = useRef<number>(computeTargetEndTime());

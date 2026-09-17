@@ -59,7 +59,7 @@ export default function DealerBiddingPage({ params }: PageProps) {
         { label: "Body Type", value: l.body_type || "N/A" },
         { label: "Color", value: l.color || "N/A" },
       ],
-      timeRemainingSeconds: l.time_remaining_seconds ?? 3600,
+      timeRemainingSeconds: l.time_remaining_seconds ?? 7200,
       expiresAt: l.expires_at || undefined,
       currentHighestBid: l.current_highest_bid ? Number(l.current_highest_bid) : 0,
       totalOffers: l.total_offers ?? 0,

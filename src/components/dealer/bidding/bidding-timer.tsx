@@ -13,7 +13,7 @@ type BiddingTimerProps = {
 
 export function BiddingTimer({
   phase = "active",
-  initialSeconds = 3600,
+  initialSeconds = 7200,
   expiresAt,
   className,
 }: BiddingTimerProps) {
@@ -22,7 +22,7 @@ export function BiddingTimer({
     expiresAt,
     timeRemainingSeconds: initialSeconds,
     isLive: isLiveAuction,
-    totalDurationSeconds: 3600,
+    totalDurationSeconds: 7200,
   });
 
   const minutesRemaining = Math.max(0, Math.ceil(secondsLeft / 60));
@@ -65,9 +65,9 @@ export function BiddingTimer({
         </span>
       </div>
 
-      {/* Segmented Dual-Phase Progress Bar matching Frame 69 & Frame 75 */}
+      {/* Segmented Dual-Phase Progress Bar (First 110 min blind / Last 10 min open) */}
       <div className="relative h-2 w-full overflow-hidden rounded-full bg-[#E5E7EB]">
-        {/* Blind phase marker (First 50/60 = 83.33%) */}
+        {/* Blind phase marker (First 110/120 = 91.67%) */}
         <div
           className={cn(
             "h-full rounded-full transition-all duration-300 ease-linear",
@@ -76,13 +76,13 @@ export function BiddingTimer({
           style={{ width: `${progressPct}%` }}
         />
         {/* 10-min split line */}
-        <div className="absolute top-0 bottom-0 left-[83.33%] w-[2px] bg-white z-10" />
+        <div className="absolute top-0 bottom-0 left-[91.67%] w-[2px] bg-white z-10" />
       </div>
 
-      {/* Mode / Indicator Labels matching PDF */}
+      {/* Mode / Indicator Labels */}
       <div className="flex justify-between items-center font-navbar text-[11px] sm:text-xs">
         <span className={cn("font-medium", !isFinal10Min ? "text-[#FFA51F] font-semibold" : "text-[#5E5E5E]")}>
-          Blind (First 50 min)
+          Blind (First 110 min)
         </span>
         <span className={cn("font-medium", isFinal10Min ? "text-[#FFA51F] font-bold" : "text-[#5E5E5E]")}>
           Open (Last 10 min)

@@ -57,7 +57,7 @@ export default function DealerActiveOfferPage({ params }: PageProps) {
         { label: "Ownership Status", value: l.ownership_status || "Owned" },
         { label: "Body Type", value: l.body_type || "N/A" },
       ],
-      timeRemainingSeconds: l.time_remaining_seconds ?? 3600,
+      timeRemainingSeconds: l.time_remaining_seconds ?? 7200,
       expiresAt: l.expires_at || undefined,
       currentHighestBid: l.current_highest_bid ? Number(l.current_highest_bid) : 0,
       totalOffers: l.total_offers ?? 0,
