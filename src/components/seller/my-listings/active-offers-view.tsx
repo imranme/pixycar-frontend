@@ -206,10 +206,12 @@ export function ActiveOffersView({ listing }: ActiveOffersViewProps) {
               {visibleOffers.map((o, idx) => (
                 <OfferRow
                   key={`${o.dealerId}-${idx}`}
-                  dealerName={o.dealerId}
+                  dealerName={`Dealer ${idx + 1}`}
                   timeAgo={o.timeAgo}
                   amount={o.amount}
                   isHighest={o.isHighest}
+                  distance={o.distance}
+                  location={o.location}
                   layout="list"
                 />
               ))}

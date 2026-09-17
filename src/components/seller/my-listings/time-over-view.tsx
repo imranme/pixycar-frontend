@@ -45,6 +45,8 @@ export function TimeOverView({ listing }: TimeOverViewProps) {
                   timeAgo={o.timeAgo}
                   amount={o.amount}
                   isHighest={o.isHighest}
+                  distance={o.distance}
+                  location={o.location}
                   layout="list"
                 />
               ))}
