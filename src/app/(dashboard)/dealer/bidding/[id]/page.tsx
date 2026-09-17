@@ -36,7 +36,7 @@ export default function DealerBiddingPage({ params }: PageProps) {
       phase: isTimeOver ? "timeOver" : "active",
       title: `${l.year || ""} ${l.make || ""} ${l.model || ""} ${l.trim || ""}`.trim() || "Vehicle Details",
       miles: l.mileage ? `${Number(l.mileage).toLocaleString()} miles` : "N/A",
-      location: l.seller_name || l.address || "USA",
+      location: l.seller_location ? (l.distance_display ? `${l.seller_location} (${l.distance_display})` : l.seller_location) : "USA",
       year: String(l.year || "N/A"),
       vin: l.registration_number ? `VIN/Reg: ${l.registration_number}` : "N/A",
       description: l.description || "No specific condition details provided by seller.",
