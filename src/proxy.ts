@@ -27,8 +27,17 @@ function getUserRoleFromRequest(request: NextRequest): string | null {
   return request.cookies.get('pixycar_role')?.value ?? null;
 }
 
+function matchesRoute(pathname: string, routes: string[]): boolean {
+  return routes.some((route) => pathname === route || pathname.startsWith(`${route}/`));
+}
+
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // ── Public routes that should always be accessible ─────────────────────────
+  if (pathname.startsWith('/dealer-invite')) {
+    return NextResponse.next();
+  }
 
   const token = getTokenFromRequest(request);
   const role = getUserRoleFromRequest(request);
@@ -44,7 +53,7 @@ export function proxy(request: NextRequest) {
   }
 
   // ── Protect seller routes ────────────────────────────────────────────────
-  const isSellerRoute = SELLER_ROUTES.some((route) => pathname.startsWith(route));
+  const isSellerRoute = matchesRoute(pathname, SELLER_ROUTES);
   if (isSellerRoute && !isAuthenticated) {
     const signInUrl = new URL('/sign-in', request.url);
     signInUrl.searchParams.set('next', pathname);
@@ -52,7 +61,7 @@ export function proxy(request: NextRequest) {
   }
 
   // ── Protect dealer routes ────────────────────────────────────────────────
-  const isDealerRoute = DEALER_ROUTES.some((route) => pathname.startsWith(route));
+  const isDealerRoute = matchesRoute(pathname, DEALER_ROUTES);
   if (isDealerRoute && !isAuthenticated) {
     const signInUrl = new URL('/sign-in', request.url);
     signInUrl.searchParams.set('next', pathname);
