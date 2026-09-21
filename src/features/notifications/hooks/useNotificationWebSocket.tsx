@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { useAppDispatch, useAppSelector } from "@/store";
 import { notificationsApi } from "@/store/features/notifications/notificationsApi";
 import { listingsApi } from "@/store/features/listings/listingsApi";
+import { communicationApi } from "@/store/features/communication/communicationApi";
 import toast from "react-hot-toast";
 
 export interface PushNotificationPayload {
@@ -74,9 +75,10 @@ export function useNotificationWebSocket() {
           const data: PushNotificationPayload = JSON.parse(event.data);
 
           if (data.type === "notification" || data.title || data.message) {
-            // 1. Invalidate RTK Query cache so unread-count, notifications, and live listings/ranks immediately refresh
+            // 1. Invalidate RTK Query cache so unread-count, notifications, live listings, and chat threads immediately refresh
             dispatch(notificationsApi.util.invalidateTags(["Notifications"]));
             dispatch(listingsApi.util.invalidateTags(["Listings"]));
+            dispatch(communicationApi.util.invalidateTags(["Communication"]));
 
             const isMessageNotification =
               data.notification_type === "NEW_MESSAGE" ||

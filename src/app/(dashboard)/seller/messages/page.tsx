@@ -24,14 +24,13 @@ function SellerMessagesContent() {
 
   const { data: threadsData, isLoading: isLoadingThreads } = useGetThreadsQuery();
   const [sendMessageApi] = useSendMessageMutation();
-  const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeConvoId, setActiveConvoId] = useState<string>("");
   const [mobileShowChat, setMobileShowChat] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [localPendingMessages, setLocalPendingMessages] = useState<{ [threadId: string]: ChatMessage[] }>({});
   const typingTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const apiConversations = useMemo(() => {
+  const conversations: Conversation[] = useMemo(() => {
     const list: any[] = Array.isArray(threadsData)
       ? threadsData
       : threadsData && "results" in (threadsData as object) && Array.isArray((threadsData as any).results)
@@ -71,42 +70,24 @@ function SellerMessagesContent() {
   }, [threadsData]);
 
   useEffect(() => {
-    if (apiConversations.length > 0) {
-      setConversations(apiConversations);
-      if (!activeConvoId) {
-        let match = urlRoomId ? apiConversations.find((c) => c.id === urlRoomId) : null;
-        const threadsList: any[] = Array.isArray(threadsData)
-          ? threadsData
-          : threadsData && "results" in (threadsData as object) && Array.isArray((threadsData as any).results)
-          ? (threadsData as any).results
-          : [];
-        if (!match && urlRoomId && threadsList.length > 0) {
+    if (conversations.length > 0) {
+      if (!activeConvoId || !conversations.some((c) => c.id === activeConvoId)) {
+        let match = urlRoomId ? conversations.find((c) => c.id === urlRoomId) : null;
+        if (!match && urlRoomId) {
+          const threadsList: any[] = Array.isArray(threadsData)
+            ? threadsData
+            : threadsData && "results" in (threadsData as object) && Array.isArray((threadsData as any).results)
+            ? (threadsData as any).results
+            : [];
           const tMatch = threadsList.find((t) => String(t.listing) === urlRoomId);
           if (tMatch) {
-            match = apiConversations.find((c) => c.id === String(tMatch.id));
+            match = conversations.find((c) => c.id === String(tMatch.id));
           }
         }
-        setActiveConvoId(match ? match.id : apiConversations[0].id);
+        setActiveConvoId(match ? match.id : conversations[0].id);
       }
     }
-  }, [apiConversations, urlRoomId, activeConvoId, threadsData]);
-
-  useEffect(() => {
-    if (urlRoomId) {
-      let matchedId = urlRoomId;
-      const threadsList: any[] = Array.isArray(threadsData)
-        ? threadsData
-        : threadsData && "results" in (threadsData as object) && Array.isArray((threadsData as any).results)
-        ? (threadsData as any).results
-        : [];
-      if (threadsList.length > 0) {
-        const tMatch = threadsList.find((t) => String(t.listing) === urlRoomId);
-        if (tMatch) matchedId = String(tMatch.id);
-      }
-      setActiveConvoId(matchedId);
-      setMobileShowChat(true);
-    }
-  }, [urlRoomId, threadsData]);
+  }, [conversations, urlRoomId, activeConvoId, threadsData]);
 
   const { data: threadMessagesData } = useGetThreadMessagesQuery(activeConvoId, {
     skip: !activeConvoId || isNaN(Number(activeConvoId)),

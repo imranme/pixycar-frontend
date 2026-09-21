@@ -1,6 +1,9 @@
 "use client";
 
 import { useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { useAppSelector } from "@/store";
+import { ROUTES } from "@/constants/routes";
 import { AlertCircle, Bell, Check, Clock, TrendingUp, Trophy, X } from "lucide-react";
 import {
   useGetNotificationsQuery,
@@ -60,6 +63,8 @@ type NotificationPanelProps = {
 };
 
 export function NotificationPanel({ onClose }: NotificationPanelProps) {
+  const router = useRouter();
+  const currentUser = useAppSelector((state) => state.auth.user);
   const { data: apiData, isLoading } = useGetNotificationsQuery();
   const [markRead] = useMarkNotificationsReadMutation();
 
@@ -103,11 +108,19 @@ export function NotificationPanel({ onClose }: NotificationPanelProps) {
     }
   };
 
-  const handleItemClick = async (id: string) => {
+  const handleItemClick = async (n: NotificationItemData) => {
     try {
-      await markRead({ id: Number(id) }).unwrap();
+      await markRead({ id: Number(n.id) }).unwrap();
     } catch {
       // Handled silently
+    }
+    if (onClose) onClose();
+    const isMsg =
+      n.title.toLowerCase().includes("message") ||
+      n.subtitle.toLowerCase().includes("message");
+    if (isMsg) {
+      const isDealer = currentUser?.role?.toLowerCase() === "dealer";
+      router.push(isDealer ? ROUTES.dealer.messages : ROUTES.seller.messages);
     }
   };
 
@@ -157,7 +170,7 @@ export function NotificationPanel({ onClose }: NotificationPanelProps) {
               <button
                 type="button"
                 className="flex w-full cursor-pointer gap-3 text-left items-start"
-                onClick={() => handleItemClick(n.id)}
+                onClick={() => handleItemClick(n)}
               >
                 <IconWrap type={n.icon} />
                 <div className="min-w-0 flex-1">
