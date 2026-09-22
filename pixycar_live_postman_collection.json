@@ -332,7 +332,7 @@
                 }
               ],
               "cookie": [],
-              "body": "{\"tokens\":{\"refresh\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc5MjY1MTE2OSwiaWF0IjoxNzkwMDU5MTY5LCJqdGkiOiI2OWRmZjU5ZTE2NTk0ZDBkODA5YzM3OGNlMGVkMzY0NCIsInVzZXJfaWQiOiI5In0.iZcI-dzXqYuwy8sW91DHRvhjRsBJgYO0hgE4jhunh1Q\",\"access\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzkwNjYzOTY5LCJpYXQiOjE3OTAwNTkxNjksImp0aSI6ImUwY2QyMjI5MjIyZTQyNmJiNDI5ZmI0NTczMDkwNzliIiwidXNlcl9pZCI6IjkifQ.bgdI8HJoB6qCQ8pPio15pA65QMeCc9Z35e1_HRGjDl4\"},\"user\":{\"id\":9,\"email\":\"seller7@test.com\",\"role\":\"SELLER\",\"full_name\":\"Tushar Hossain\",\"avatar\":null}}"
+              "body": "{\"tokens\":{\"refresh\":\"sample_jwt_token_demo_hash_example\",\"access\":\"sample_jwt_token_demo_hash_example\"},\"user\":{\"id\":9,\"email\":\"seller7@test.com\",\"role\":\"SELLER\",\"full_name\":\"Tushar Hossain\",\"avatar\":null}}"
             }
           ]
         },
@@ -348,7 +348,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"refresh\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc5MjY1MTE2OCwiaWF0IjoxNzkwMDU5MTY4LCJqdGkiOiJkMDFiZTdmZmM0Mjc0YTk4Yjg3OGJmMTY5NmI4ZGQyNCIsInVzZXJfaWQiOiI5In0.c94jUd-ZmkSFk3Gg7wLIEdZ8LCUAKN373VPaIf6zJG8\"}"
+              "raw": "{\"refresh\": \"sample_jwt_token_demo_hash_example\"}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/accounts/token/refresh/",
@@ -378,7 +378,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\"refresh\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc5MjY1MTE2OCwiaWF0IjoxNzkwMDU5MTY4LCJqdGkiOiJkMDFiZTdmZmM0Mjc0YTk4Yjg3OGJmMTY5NmI4ZGQyNCIsInVzZXJfaWQiOiI5In0.c94jUd-ZmkSFk3Gg7wLIEdZ8LCUAKN373VPaIf6zJG8\"}"
+                  "raw": "{\"refresh\": \"sample_jwt_token_demo_hash_example\"}"
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/accounts/token/refresh/",
@@ -441,7 +441,7 @@
                 }
               ],
               "cookie": [],
-              "body": "{\"access\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzkwNjYzOTY5LCJpYXQiOjE3OTAwNTkxNjksImp0aSI6ImM2M2Y5NjZlNzI5YTQxOGNhYjRkNDI1MTQ1ZGFlMzlmIiwidXNlcl9pZCI6IjkifQ.JJzVRjxlHLMFiVVO5PzkJiwsE3tk-7AEU1q7dDy46KU\",\"refresh\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc5MjY1MTE2OSwiaWF0IjoxNzkwMDU5MTY5LCJqdGkiOiJkOWVkNTdmNjc2MmI0MTBmYjgxODY0MDZjNjdlYmQ2MCIsInVzZXJfaWQiOiI5In0.zFQ_GMJH4geTlu-HJ63cQjmPL7aT46XdyKszNHiWvbY\"}"
+              "body": "{\"access\":\"sample_jwt_token_demo_hash_example\",\"refresh\":\"sample_jwt_token_demo_hash_example\"}"
             }
           ]
         },
