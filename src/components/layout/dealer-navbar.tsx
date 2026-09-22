@@ -66,7 +66,7 @@ export function DealerNavbar() {
   }, [threadsData]);
 
   const unreadMessagesCount = Math.max(unreadData?.unread_messages_count ?? 0, threadsUnreadCount);
-  const hasUnread = (unreadData?.unread_notifications_count ?? unreadData?.unread_count ?? 0) > 0;
+  const unreadNotificationCount = unreadData?.unread_count ?? 0;
 
   useEffect(() => {
     const onPointerDown = (e: MouseEvent | PointerEvent) => {
@@ -163,7 +163,10 @@ export function DealerNavbar() {
           <div ref={notificationsRef} className="relative">
             <button
               type="button"
-              className="relative cursor-pointer rounded-lg p-2 text-[#5E5E5E] hover:bg-neutral-100 hover:text-[#1E1E1E]"
+              className={cn(
+                "relative cursor-pointer rounded-lg p-2 text-[#5E5E5E] transition hover:bg-neutral-100 hover:text-[#1E1E1E]",
+                notificationsOpen && "bg-neutral-100 text-[#1E1E1E]"
+              )}
               aria-label="Notifications"
               aria-expanded={notificationsOpen}
               onClick={() => {
@@ -172,8 +175,10 @@ export function DealerNavbar() {
               }}
             >
               <Bell className="size-5" strokeWidth={2} />
-              {hasUnread ? (
-                <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-red-500 ring-2 ring-white" />
+              {unreadNotificationCount > 0 ? (
+                <span className="absolute -top-0.5 -right-0.5 flex min-w-4 h-4 items-center justify-center rounded-full bg-[#FA383E] px-1 text-[10px] font-bold text-white shadow-xs ring-2 ring-white animate-in zoom-in-50 duration-200">
+                  {unreadNotificationCount > 9 ? "9+" : unreadNotificationCount}
+                </span>
               ) : null}
             </button>
             {notificationsOpen ? (

@@ -124,6 +124,10 @@ export function NotificationPanel({ onClose }: NotificationPanelProps) {
     }
   };
 
+  const unreadCount = useMemo(() => {
+    return liveList.filter((n) => !n.isRead).length;
+  }, [liveList]);
+
   return (
     <div
       className="absolute right-0 top-full z-50 mt-2 min-w-80 max-w-[calc(100vw-1.5rem)] rounded-2xl border border-[#E5E7EB] bg-white shadow-xl"
@@ -134,6 +138,11 @@ export function NotificationPanel({ onClose }: NotificationPanelProps) {
         <div className="flex items-center gap-2">
           <Bell className="size-4 shrink-0 text-[#5E5E5E]" strokeWidth={2} aria-hidden />
           <h2 className="font-hero-heading text-sm font-bold text-[#1E1E1E] sm:text-base">Notifications</h2>
+          {unreadCount > 0 ? (
+            <span className="flex items-center rounded-full bg-[#FA383E] px-2 py-0.5 text-[10px] font-bold text-white shadow-xs">
+              {unreadCount} new
+            </span>
+          ) : null}
         </div>
         <div className="flex items-center gap-2">
           <button
