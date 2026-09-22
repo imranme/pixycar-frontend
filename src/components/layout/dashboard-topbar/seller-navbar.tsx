@@ -13,7 +13,7 @@ import { MessengerPanel } from "@/components/layout/messenger-panel";
 import { useAppSelector } from "@/store";
 import { selectCurrentUser } from "@/store/features/auth/authSlice";
 
-import { useGetUnreadNotificationCountQuery } from "@/store/features/notifications/notificationsApi";
+import { useGetNotificationsQuery, useGetUnreadNotificationCountQuery } from "@/store/features/notifications/notificationsApi";
 import { useGetThreadsQuery } from "@/store/features/communication/communicationApi";
 
 const NAV = [
@@ -53,6 +53,29 @@ export function SellerNavbar() {
 
   const { data: unreadData } = useGetUnreadNotificationCountQuery();
   const { data: threadsData } = useGetThreadsQuery();
+  const { data: notificationsData } = useGetNotificationsQuery({ unread: true });
+
+  const { messageNotifsCount, nonMessageNotifsCount } = useMemo(() => {
+    if (!notificationsData) return { messageNotifsCount: 0, nonMessageNotifsCount: 0 };
+    const items = Array.isArray(notificationsData)
+      ? notificationsData
+      : Array.isArray((notificationsData as any)?.results)
+      ? (notificationsData as any).results
+      : [];
+    let msgCount = 0;
+    let otherCount = 0;
+    for (const item of items) {
+      if (
+        item.notification_type === "NEW_MESSAGE" ||
+        (item.title && item.title.toLowerCase().includes("message"))
+      ) {
+        msgCount++;
+      } else {
+        otherCount++;
+      }
+    }
+    return { messageNotifsCount: msgCount, nonMessageNotifsCount: otherCount };
+  }, [notificationsData]);
 
   const threadsUnreadCount = useMemo(() => {
     if (!threadsData) return 0;
@@ -64,8 +87,15 @@ export function SellerNavbar() {
     return list.reduce((acc: number, t: any) => acc + Number(t.unread_count || 0), 0);
   }, [threadsData]);
 
-  const unreadMessagesCount = Math.max(unreadData?.unread_messages_count ?? 0, threadsUnreadCount);
-  const unreadNotificationCount = unreadData?.unread_count ?? 0;
+  const unreadMessagesCount =
+    unreadData?.unread_messages_count !== undefined
+      ? Math.max(unreadData.unread_messages_count, threadsUnreadCount)
+      : Math.max(threadsUnreadCount, messageNotifsCount);
+
+  const unreadNotificationCount =
+    unreadData?.unread_notifications_count !== undefined
+      ? unreadData.unread_notifications_count
+      : nonMessageNotifsCount;
 
   useEffect(() => {
     const onPointerDown = (e: MouseEvent | PointerEvent) => {

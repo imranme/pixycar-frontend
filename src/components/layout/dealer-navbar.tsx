@@ -13,7 +13,7 @@ import { DEALER_NOTIFICATION_ITEMS } from "@/components/dealer/notifications/dea
 
 import { useAppSelector } from "@/store";
 import { selectCurrentUser } from "@/store/features/auth/authSlice";
-import { useGetUnreadNotificationCountQuery } from "@/store/features/notifications/notificationsApi";
+import { useGetNotificationsQuery, useGetUnreadNotificationCountQuery } from "@/store/features/notifications/notificationsApi";
 import { useGetThreadsQuery } from "@/store/features/communication/communicationApi";
 
 const NAV = [
@@ -30,9 +30,7 @@ function isActive(pathname: string, href: string) {
     return (
       pathname === ROUTES.dealer.messages ||
       pathname.startsWith(`${ROUTES.dealer.messages}/`) ||
-      pathname.startsWith("/dealer/seller-profile/") ||
-      pathname.startsWith("/dealer/bidding-sold/") ||
-      pathname.startsWith("/dealer/dealer-profile")
+      pathname.startsWith("/dealer/seller-profile")
     );
   }
   return pathname === href || pathname.startsWith(`${href}/`);
@@ -44,7 +42,7 @@ export function DealerNavbar() {
   const pathname = usePathname();
   const user = useAppSelector(selectCurrentUser);
   const displayName = user?.business_name || user?.full_name || user?.name || (user?.email ? user.email.split("@")[0] : "Dealer");
-  const avatarUrl = user?.avatar || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=96&h=96&fit=crop&crop=face";
+  const avatarUrl = user?.avatar || "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=96&h=96&fit=crop&crop=face";
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -54,6 +52,29 @@ export function DealerNavbar() {
 
   const { data: unreadData } = useGetUnreadNotificationCountQuery();
   const { data: threadsData } = useGetThreadsQuery();
+  const { data: notificationsData } = useGetNotificationsQuery({ unread: true });
+
+  const { messageNotifsCount, nonMessageNotifsCount } = useMemo(() => {
+    if (!notificationsData) return { messageNotifsCount: 0, nonMessageNotifsCount: 0 };
+    const items = Array.isArray(notificationsData)
+      ? notificationsData
+      : Array.isArray((notificationsData as any)?.results)
+      ? (notificationsData as any).results
+      : [];
+    let msgCount = 0;
+    let otherCount = 0;
+    for (const item of items) {
+      if (
+        item.notification_type === "NEW_MESSAGE" ||
+        (item.title && item.title.toLowerCase().includes("message"))
+      ) {
+        msgCount++;
+      } else {
+        otherCount++;
+      }
+    }
+    return { messageNotifsCount: msgCount, nonMessageNotifsCount: otherCount };
+  }, [notificationsData]);
 
   const threadsUnreadCount = useMemo(() => {
     if (!threadsData) return 0;
@@ -65,8 +86,15 @@ export function DealerNavbar() {
     return list.reduce((acc: number, t: any) => acc + Number(t.unread_count || 0), 0);
   }, [threadsData]);
 
-  const unreadMessagesCount = Math.max(unreadData?.unread_messages_count ?? 0, threadsUnreadCount);
-  const unreadNotificationCount = unreadData?.unread_count ?? 0;
+  const unreadMessagesCount =
+    unreadData?.unread_messages_count !== undefined
+      ? Math.max(unreadData.unread_messages_count, threadsUnreadCount)
+      : Math.max(threadsUnreadCount, messageNotifsCount);
+
+  const unreadNotificationCount =
+    unreadData?.unread_notifications_count !== undefined
+      ? unreadData.unread_notifications_count
+      : nonMessageNotifsCount;
 
   useEffect(() => {
     const onPointerDown = (e: MouseEvent | PointerEvent) => {

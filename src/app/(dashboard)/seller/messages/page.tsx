@@ -15,6 +15,10 @@ import {
   useSendMessageMutation,
   useMarkThreadReadMutation,
 } from "@/store/features/communication/communicationApi";
+import {
+  useGetNotificationsQuery,
+  useMarkNotificationsReadMutation,
+} from "@/store/features/notifications/notificationsApi";
 import { useAppSelector } from "@/store";
 import { selectCurrentUser } from "@/store/features/auth/authSlice";
 
@@ -24,13 +28,29 @@ function SellerMessagesContent() {
   const currentUser = useAppSelector(selectCurrentUser);
 
   const { data: threadsData, isLoading: isLoadingThreads } = useGetThreadsQuery();
+  const { data: notificationsData } = useGetNotificationsQuery({ unread: true });
   const [sendMessageApi] = useSendMessageMutation();
   const [markThreadReadApi] = useMarkThreadReadMutation();
+  const [markNotificationsReadApi] = useMarkNotificationsReadMutation();
   const [activeConvoId, setActiveConvoId] = useState<string>("");
   const [mobileShowChat, setMobileShowChat] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [localPendingMessages, setLocalPendingMessages] = useState<{ [threadId: string]: ChatMessage[] }>({});
   const typingTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const unreadMessageNotifs = useMemo(() => {
+    if (!notificationsData) return [];
+    const items = Array.isArray(notificationsData)
+      ? notificationsData
+      : Array.isArray((notificationsData as any)?.results)
+      ? (notificationsData as any).results
+      : [];
+    return items.filter(
+      (n: any) =>
+        n.notification_type === "NEW_MESSAGE" ||
+        (n.title && n.title.toLowerCase().includes("message"))
+    );
+  }, [notificationsData]);
 
   const conversations: Conversation[] = useMemo(() => {
     const list: any[] = Array.isArray(threadsData)
@@ -41,9 +61,16 @@ function SellerMessagesContent() {
 
     if (!list || list.length === 0) return [];
 
-    return list.map((t) => {
+    return list.map((t, index) => {
       const otherParty = t.dealer_name || t.other_party_label || "Verified Dealer";
       const initial = otherParty.charAt(0).toUpperCase() || "D";
+      const directUnread = Number(t.unread_count || 0);
+      const listingId = Number(t.listing_id || t.listing || 0);
+      const fallbackFromListing = listingId
+        ? unreadMessageNotifs.filter((n: any) => Number(n.related_listing_id) === listingId).length
+        : 0;
+      const fallbackSingleThread = list.length === 1 ? unreadMessageNotifs.length : 0;
+      const unreadCount = directUnread > 0 ? directUnread : (fallbackFromListing || (index === 0 ? fallbackSingleThread : 0));
 
       return {
         id: String(t.id),
@@ -61,15 +88,15 @@ function SellerMessagesContent() {
         time: t.updated_at
           ? new Date(t.updated_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
           : "",
-        unread: t.unread_count || 0,
-        unreadCount: t.unread_count || 0,
+        unread: unreadCount,
+        unreadCount,
         badge: t.is_unlocked ? undefined : "Unlock Required",
         isUnlocked: Boolean(t.is_unlocked),
         biddingSoldListingId: String(t.listing_id || t.listing || t.id),
         messages: [],
       };
     });
-  }, [threadsData]);
+  }, [threadsData, unreadMessageNotifs]);
 
   useEffect(() => {
     if (conversations.length > 0) {
@@ -154,14 +181,28 @@ function SellerMessagesContent() {
   useEffect(() => {
     if (activeConvoId && !isNaN(Number(activeConvoId))) {
       markThreadReadApi(activeConvoId);
+      const currentConvo = conversations.find((c) => c.id === activeConvoId);
+      const listingId = currentConvo?.biddingSoldListingId ? Number(currentConvo.biddingSoldListingId) : 0;
+      for (const notif of unreadMessageNotifs) {
+        if (!listingId || Number(notif.related_listing_id) === listingId || conversations.length === 1) {
+          markNotificationsReadApi({ id: notif.id });
+        }
+      }
     }
-  }, [activeConvoId, markThreadReadApi]);
+  }, [activeConvoId, markThreadReadApi, markNotificationsReadApi, conversations, unreadMessageNotifs]);
 
   useEffect(() => {
     if (activeConvoId && wsMessages.length > 0 && !isNaN(Number(activeConvoId))) {
       markThreadReadApi(activeConvoId);
+      const currentConvo = conversations.find((c) => c.id === activeConvoId);
+      const listingId = currentConvo?.biddingSoldListingId ? Number(currentConvo.biddingSoldListingId) : 0;
+      for (const notif of unreadMessageNotifs) {
+        if (!listingId || Number(notif.related_listing_id) === listingId || conversations.length === 1) {
+          markNotificationsReadApi({ id: notif.id });
+        }
+      }
     }
-  }, [activeConvoId, wsMessages.length, markThreadReadApi]);
+  }, [activeConvoId, wsMessages.length, markThreadReadApi, markNotificationsReadApi, conversations, unreadMessageNotifs]);
 
   const handleSelectConvo = (id: string) => {
     setActiveConvoId(id);
@@ -170,6 +211,13 @@ function SellerMessagesContent() {
     sendTyping(false);
     if (id && !isNaN(Number(id))) {
       markThreadReadApi(id);
+      const currentConvo = conversations.find((c) => c.id === id);
+      const listingId = currentConvo?.biddingSoldListingId ? Number(currentConvo.biddingSoldListingId) : 0;
+      for (const notif of unreadMessageNotifs) {
+        if (!listingId || Number(notif.related_listing_id) === listingId || conversations.length === 1) {
+          markNotificationsReadApi({ id: notif.id });
+        }
+      }
     }
   };
 

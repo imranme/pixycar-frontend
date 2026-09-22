@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Search, MessageCircle, ArrowRight, X } from "lucide-react";
 import { useGetThreadsQuery } from "@/store/features/communication/communicationApi";
+import { useGetNotificationsQuery } from "@/store/features/notifications/notificationsApi";
 import { useAppSelector } from "@/store";
 import { ROUTES } from "@/constants/routes";
 
@@ -17,8 +18,23 @@ export function MessengerPanel({ onClose, userRole }: MessengerPanelProps) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const { data: threadsData, isLoading, isError } = useGetThreadsQuery();
+  const { data: notificationsData } = useGetNotificationsQuery({ unread: true });
 
   const messagesUrl = userRole === "dealer" ? ROUTES.dealer.messages : ROUTES.seller.messages;
+
+  const unreadMessageNotifs = useMemo(() => {
+    if (!notificationsData) return [];
+    const items = Array.isArray(notificationsData)
+      ? notificationsData
+      : Array.isArray((notificationsData as any)?.results)
+      ? (notificationsData as any).results
+      : [];
+    return items.filter(
+      (n: any) =>
+        n.notification_type === "NEW_MESSAGE" ||
+        (n.title && n.title.toLowerCase().includes("message"))
+    );
+  }, [notificationsData]);
 
   const conversationList = useMemo(() => {
     const rawList: any[] = Array.isArray(threadsData)
@@ -29,7 +45,7 @@ export function MessengerPanel({ onClose, userRole }: MessengerPanelProps) {
 
     if (!rawList || rawList.length === 0) return [];
 
-    return rawList.map((t: any) => {
+    return rawList.map((t: any, index: number) => {
       const isSeller = userRole === "seller";
       const name = isSeller
         ? t.dealer_name || t.other_party_label || "Verified Dealer"
@@ -51,6 +67,14 @@ export function MessengerPanel({ onClose, userRole }: MessengerPanelProps) {
           ? new Date(t.updated_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
           : "";
 
+      const directUnread = Number(t.unread_count || 0);
+      const listingId = Number(t.listing_id || t.listing || 0);
+      const fallbackFromListing = listingId
+        ? unreadMessageNotifs.filter((n: any) => Number(n.related_listing_id) === listingId).length
+        : 0;
+      const fallbackSingleThread = rawList.length === 1 ? unreadMessageNotifs.length : 0;
+      const unreadCount = directUnread > 0 ? directUnread : (fallbackFromListing || (index === 0 ? fallbackSingleThread : 0));
+
       return {
         id: String(t.id),
         name,
@@ -58,11 +82,11 @@ export function MessengerPanel({ onClose, userRole }: MessengerPanelProps) {
         carName: t.listing_title || "Vehicle",
         lastMessage: lastMsgText,
         time: lastMsgTime,
-        unreadCount: Number(t.unread_count || 0),
+        unreadCount,
         isUnlocked: Boolean(t.is_unlocked),
       };
     });
-  }, [threadsData, userRole]);
+  }, [threadsData, userRole, unreadMessageNotifs]);
 
   const filteredConversations = useMemo(() => {
     if (!searchQuery.trim()) return conversationList;
@@ -76,8 +100,9 @@ export function MessengerPanel({ onClose, userRole }: MessengerPanelProps) {
   }, [conversationList, searchQuery]);
 
   const totalUnread = useMemo(() => {
-    return conversationList.reduce((acc, c) => acc + (c.unreadCount || 0), 0);
-  }, [conversationList]);
+    const listTotal = conversationList.reduce((acc, c) => acc + (c.unreadCount || 0), 0);
+    return Math.max(listTotal, unreadMessageNotifs.length);
+  }, [conversationList, unreadMessageNotifs]);
 
   const handleSelectThread = (threadId: string) => {
     onClose();
