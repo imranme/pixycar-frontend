@@ -4,10 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Bell, Menu, Settings, X } from "lucide-react";
+import { Bell, Menu, MessageCircle, Settings, X } from "lucide-react";
 import { ROUTES } from "@/constants/routes";
 import { cn } from "@/lib/utils";
 import { NotificationPanel } from "@/components/seller/notifications/notification-panel";
+import { MessengerPanel } from "@/components/layout/messenger-panel";
 
 import { useAppSelector } from "@/store";
 import { selectCurrentUser } from "@/store/features/auth/authSlice";
@@ -46,21 +47,25 @@ export function SellerNavbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const notificationsRef = useRef<HTMLDivElement>(null);
+  const [messengerOpen, setMessengerOpen] = useState(false);
+  const messengerRef = useRef<HTMLDivElement>(null);
 
   const { data: unreadData } = useGetUnreadNotificationCountQuery();
   const hasUnread = (unreadData?.unread_count ?? 0) > 0;
 
   useEffect(() => {
-    if (!notificationsOpen) return;
     const onPointerDown = (e: MouseEvent | PointerEvent) => {
-      const el = notificationsRef.current;
-      if (el && !el.contains(e.target as Node)) {
+      const target = e.target as Node;
+      if (notificationsRef.current && !notificationsRef.current.contains(target)) {
         setNotificationsOpen(false);
+      }
+      if (messengerRef.current && !messengerRef.current.contains(target)) {
+        setMessengerOpen(false);
       }
     };
     document.addEventListener("pointerdown", onPointerDown);
     return () => document.removeEventListener("pointerdown", onPointerDown);
-  }, [notificationsOpen]);
+  }, []);
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-[#E5E7EB] bg-white">
@@ -114,13 +119,37 @@ export function SellerNavbar() {
         </nav>
 
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+          {/* Messenger Quick Chats */}
+          <div ref={messengerRef} className="relative">
+            <button
+              type="button"
+              className={cn(
+                "relative cursor-pointer rounded-lg p-2 text-[#5E5E5E] transition hover:bg-neutral-100 hover:text-[#0084FF]",
+                messengerOpen && "bg-[#0084FF]/10 text-[#0084FF]"
+              )}
+              aria-label="Chats"
+              aria-expanded={messengerOpen}
+              onClick={() => {
+                setMessengerOpen((o) => !o);
+                setNotificationsOpen(false);
+              }}
+            >
+              <MessageCircle className="size-5" strokeWidth={2} />
+            </button>
+            {messengerOpen ? <MessengerPanel onClose={() => setMessengerOpen(false)} userRole="seller" /> : null}
+          </div>
+
+          {/* Notifications */}
           <div ref={notificationsRef} className="relative">
             <button
               type="button"
               className="relative cursor-pointer rounded-lg p-2 text-[#5E5E5E] hover:bg-neutral-100 hover:text-[#1E1E1E]"
               aria-label="Notifications"
               aria-expanded={notificationsOpen}
-              onClick={() => setNotificationsOpen((o) => !o)}
+              onClick={() => {
+                setNotificationsOpen((o) => !o);
+                setMessengerOpen(false);
+              }}
             >
               <Bell className="size-5" strokeWidth={2} />
               {hasUnread ? (

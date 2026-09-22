@@ -65,7 +65,7 @@ type NotificationPanelProps = {
 export function NotificationPanel({ onClose }: NotificationPanelProps) {
   const router = useRouter();
   const currentUser = useAppSelector((state) => state.auth.user);
-  const { data: apiData, isLoading } = useGetNotificationsQuery();
+  const { data: apiData, isLoading, isError } = useGetNotificationsQuery();
   const [markRead] = useMarkNotificationsReadMutation();
 
   const liveList: NotificationItemData[] = useMemo(() => {
@@ -155,10 +155,17 @@ export function NotificationPanel({ onClose }: NotificationPanelProps) {
       </div>
 
       <ul className="max-h-[min(70vh,420px)] overflow-y-auto px-2 pb-3 pt-1 divide-y divide-[#F3F4F6]">
-        {isLoading ? (
-          <li className="px-4 py-6 text-center font-navbar text-sm text-[#5E5E5E]">Loading notifications…</li>
+        {isLoading && !apiData ? (
+          <li className="flex flex-col items-center justify-center gap-2 px-4 py-8 text-center font-navbar text-xs text-[#8E8E93]">
+            <span className="size-5 animate-spin rounded-full border-2 border-[#FFA51F] border-t-transparent" />
+            Loading notifications…
+          </li>
+        ) : isError ? (
+          <li className="px-4 py-8 text-center font-navbar text-xs text-red-500">
+            Could not load notifications
+          </li>
         ) : liveList.length === 0 ? (
-          <li className="px-4 py-6 text-center font-navbar text-sm text-[#5E5E5E]">No notifications found</li>
+          <li className="px-4 py-8 text-center font-navbar text-sm text-[#5E5E5E]">No notifications found</li>
         ) : (
           liveList.map((n) => (
             <li

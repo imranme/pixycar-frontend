@@ -90,46 +90,101 @@ export function useNotificationWebSocket() {
               typeof window !== "undefined" &&
               window.location.pathname.toLowerCase().includes("/messages");
 
-            // 2. If the user is already on the Messages page, suppress the pop-up toast banner
-            if (isMessageNotification && isOnMessagesPage) {
-              return;
+            // 2. Play Messenger notification chime
+            try {
+              const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+              if (AudioCtx) {
+                const ctx = new AudioCtx();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = "sine";
+                const now = ctx.currentTime;
+                osc.frequency.setValueAtTime(587.33, now);
+                osc.frequency.exponentialRampToValueAtTime(880, now + 0.08);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.35);
+              }
+            } catch {
+              // Handled silently if audio context is blocked
             }
 
-            // 3. Display In-App Toast Alert for other events or when outside the Messages page
-            const title = data.title || "New Notification";
+            const title = data.title || "New Message";
             const message = data.message || "";
+            const isDealer = user?.role?.toLowerCase() === "dealer";
+            const targetMessagesUrl = isDealer ? "/dealer/messages" : "/seller/messages";
 
+            // 3. Display Facebook Messenger Style In-App Toast
             toast.custom(
               (t) => (
                 <div
+                  onClick={() => {
+                    toast.dismiss(t.id);
+                    if (typeof window !== "undefined") {
+                      window.location.href = targetMessagesUrl;
+                    }
+                  }}
                   className={`${
                     t.visible ? "animate-enter" : "animate-leave"
-                  } max-w-sm w-full bg-white shadow-2xl rounded-2xl pointer-events-auto flex ring-1 ring-black/5 p-4 border border-[#ECECEC] transition-all`}
+                  } w-88 max-w-[calc(100vw-2rem)] cursor-pointer overflow-hidden rounded-2xl bg-white border border-[#E4E6EB] p-3.5 shadow-2xl transition-all hover:scale-[1.02] active:scale-[0.99]`}
                   style={{
-                    boxShadow:
-                      "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
+                    boxShadow: "0 12px 28px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.1)",
                   }}
                 >
-                  <div className="flex-1 w-0">
-                    <div className="flex items-start gap-3">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#FA8C16]/10 text-lg">
-                        🔔
+                  {/* Top Bar */}
+                  <div className="flex items-center justify-between gap-2 pb-2">
+                    <div className="flex items-center gap-1.5">
+                      <span className="flex size-4 items-center justify-center rounded-full bg-[#0084FF] text-[10px] text-white">
+                        💬
+                      </span>
+                      <span className="font-navbar text-[11px] font-bold tracking-tight text-[#0084FF]">
+                        MESSENGER
+                      </span>
+                      <span className="text-[10px] text-[#8E8E93]">• Just now</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toast.dismiss(t.id);
+                      }}
+                      className="rounded-full p-1 text-[#8E8E93] hover:bg-[#F0F2F5] hover:text-[#1E1E1E]"
+                      aria-label="Close"
+                    >
+                      ✕
+                    </button>
+                  </div>
+
+                  {/* Body with Avatar and Message Bubble */}
+                  <div className="flex items-start gap-3">
+                    <div className="relative shrink-0">
+                      <div className="flex size-10 items-center justify-center rounded-full bg-gradient-to-tr from-[#FFA51F] to-[#FF8A00] font-hero-heading text-sm font-bold text-white shadow-xs">
+                        {title.replace(/New message from /i, "").charAt(0).toUpperCase() || "M"}
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-[#1E1E1E] leading-tight truncate">
-                          {title}
-                        </p>
-                        <p className="mt-1 text-xs text-[#5E5E5E] leading-snug line-clamp-2">
-                          {message}
-                        </p>
+                      <span className="absolute bottom-0 right-0 size-2.5 rounded-full border-2 border-white bg-[#31A24C]" />
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate font-hero-heading text-xs font-bold text-[#1E1E1E]">
+                        {title}
+                      </p>
+                      <div className="mt-1 rounded-2xl rounded-tl-sm bg-[#F0F2F5] px-3 py-2 text-xs text-[#050505] leading-snug">
+                        <p className="line-clamp-2">{message}</p>
                       </div>
+                      <p className="mt-1.5 font-navbar text-[11px] font-semibold text-[#0084FF] flex items-center gap-1">
+                        <span>Click to reply</span>
+                        <span>→</span>
+                      </p>
                     </div>
                   </div>
                 </div>
               ),
               {
                 position: "top-right",
-                duration: 5000,
+                duration: 6000,
               }
             );
           }
