@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Bell, Menu, MessageCircle, Settings, X } from "lucide-react";
 import { ROUTES } from "@/constants/routes";
 import { cn } from "@/lib/utils";
@@ -14,6 +14,7 @@ import { useAppSelector } from "@/store";
 import { selectCurrentUser } from "@/store/features/auth/authSlice";
 
 import { useGetUnreadNotificationCountQuery } from "@/store/features/notifications/notificationsApi";
+import { useGetThreadsQuery } from "@/store/features/communication/communicationApi";
 
 const NAV = [
   { label: "Dashboard", href: ROUTES.seller.dashboard },
@@ -51,7 +52,20 @@ export function SellerNavbar() {
   const messengerRef = useRef<HTMLDivElement>(null);
 
   const { data: unreadData } = useGetUnreadNotificationCountQuery();
-  const hasUnread = (unreadData?.unread_count ?? 0) > 0;
+  const { data: threadsData } = useGetThreadsQuery();
+
+  const threadsUnreadCount = useMemo(() => {
+    if (!threadsData) return 0;
+    const list = Array.isArray(threadsData)
+      ? threadsData
+      : "results" in (threadsData as object) && Array.isArray((threadsData as any).results)
+      ? (threadsData as any).results
+      : [];
+    return list.reduce((acc: number, t: any) => acc + Number(t.unread_count || 0), 0);
+  }, [threadsData]);
+
+  const unreadMessagesCount = Math.max(unreadData?.unread_messages_count ?? 0, threadsUnreadCount);
+  const hasUnread = (unreadData?.unread_notifications_count ?? unreadData?.unread_count ?? 0) > 0;
 
   useEffect(() => {
     const onPointerDown = (e: MouseEvent | PointerEvent) => {
@@ -135,6 +149,11 @@ export function SellerNavbar() {
               }}
             >
               <MessageCircle className="size-5" strokeWidth={2} />
+              {unreadMessagesCount > 0 ? (
+                <span className="absolute -top-0.5 -right-0.5 flex min-w-4 h-4 items-center justify-center rounded-full bg-[#FA383E] px-1 text-[10px] font-bold text-white shadow-xs ring-2 ring-white animate-in zoom-in-50 duration-200">
+                  {unreadMessagesCount > 9 ? "9+" : unreadMessagesCount}
+                </span>
+              ) : null}
             </button>
             {messengerOpen ? <MessengerPanel onClose={() => setMessengerOpen(false)} userRole="seller" /> : null}
           </div>

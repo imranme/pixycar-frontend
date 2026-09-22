@@ -7,6 +7,7 @@ export interface ThreadItem {
   dealer_name?: string;
   seller_name?: string;
   last_message: { text?: string; created_at?: string } | string | null;
+  unread_count?: number;
   created_at: string;
   updated_at: string;
 }
@@ -24,6 +25,7 @@ export interface ThreadMessageItem {
   sender_email: string;
   sender_name?: string;
   text: string;
+  is_read?: boolean;
   created_at: string;
 }
 

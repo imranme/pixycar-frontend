@@ -75,6 +75,10 @@ export function MessengerPanel({ onClose, userRole }: MessengerPanelProps) {
     );
   }, [conversationList, searchQuery]);
 
+  const totalUnread = useMemo(() => {
+    return conversationList.reduce((acc, c) => acc + (c.unreadCount || 0), 0);
+  }, [conversationList]);
+
   const handleSelectThread = (threadId: string) => {
     onClose();
     router.push(`${messagesUrl}?roomId=${threadId}`);
@@ -96,6 +100,11 @@ export function MessengerPanel({ onClose, userRole }: MessengerPanelProps) {
             <MessageCircle className="size-4" strokeWidth={2.4} />
           </span>
           <h2 className="font-hero-heading text-base font-bold text-[#1E1E1E]">Chats</h2>
+          {totalUnread > 0 ? (
+            <span className="flex items-center rounded-full bg-[#FA383E] px-2 py-0.5 text-[10px] font-bold text-white shadow-xs">
+              {totalUnread} new
+            </span>
+          ) : null}
         </div>
         <div className="flex items-center gap-2">
           <Link
@@ -157,7 +166,11 @@ export function MessengerPanel({ onClose, userRole }: MessengerPanelProps) {
               <button
                 type="button"
                 onClick={() => handleSelectThread(c.id)}
-                className="group flex w-full cursor-pointer items-center gap-3 rounded-xl p-2.5 text-left transition hover:bg-[#F0F2F5]/80 active:bg-[#E4E6E9]"
+                className={`group flex w-full cursor-pointer items-center gap-3 rounded-xl p-2.5 text-left transition ${
+                  c.unreadCount > 0
+                    ? "bg-[#F0F7FF] hover:bg-[#E5F0FD]"
+                    : "hover:bg-[#F0F2F5]/80 active:bg-[#E4E6E9]"
+                }`}
               >
                 {/* Avatar with active green dot */}
                 <div className="relative shrink-0">
@@ -170,7 +183,9 @@ export function MessengerPanel({ onClose, userRole }: MessengerPanelProps) {
                 {/* Details */}
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-1">
-                    <p className="truncate font-hero-heading text-xs sm:text-sm font-semibold text-[#1E1E1E] group-hover:text-[#0084FF] transition-colors">
+                    <p className={`truncate font-hero-heading text-xs sm:text-sm font-semibold transition-colors ${
+                      c.unreadCount > 0 ? "text-[#0084FF] font-bold" : "text-[#1E1E1E] group-hover:text-[#0084FF]"
+                    }`}>
                       {c.name}
                     </p>
                     <span className="shrink-0 font-navbar text-[10px] text-[#8E8E93]">{c.time}</span>
@@ -185,8 +200,8 @@ export function MessengerPanel({ onClose, userRole }: MessengerPanelProps) {
                       {c.lastMessage}
                     </p>
                     {c.unreadCount > 0 ? (
-                      <span className="flex size-4 shrink-0 items-center justify-center rounded-full bg-[#0084FF] text-[9px] font-bold text-white">
-                        {c.unreadCount}
+                      <span className="flex min-w-4.5 h-4.5 shrink-0 items-center justify-center rounded-full bg-[#FA383E] px-1 text-[10px] font-bold text-white shadow-xs">
+                        {c.unreadCount > 9 ? "9+" : c.unreadCount}
                       </span>
                     ) : null}
                   </div>

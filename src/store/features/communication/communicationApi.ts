@@ -48,6 +48,20 @@ export const communicationApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Communication'],
     }),
+    markThreadRead: builder.mutation<
+      { detail: string; unread_count?: number },
+      number | string
+    >({
+      query: (threadId) => ({
+        url: `/communication/threads/${threadId}/mark-read/`,
+        method: 'POST',
+      }),
+      invalidatesTags: (_res, _err, threadId) => [
+        'Communication',
+        'Notifications',
+        { type: 'Communication', id: threadId },
+      ],
+    }),
   }),
   overrideExisting: true,
 });
@@ -58,4 +72,5 @@ export const {
   useSendMessageMutation,
   useUnlockChatMutation,
   useInitiateContactMutation,
+  useMarkThreadReadMutation,
 } = communicationApi;

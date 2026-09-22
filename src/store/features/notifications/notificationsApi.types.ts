@@ -25,4 +25,6 @@ export interface MarkReadResponse {
 
 export interface UnreadCountResponse {
   unread_count: number;
+  unread_messages_count?: number;
+  unread_notifications_count?: number;
 }

@@ -13,6 +13,7 @@ import {
   useGetThreadsQuery,
   useGetThreadMessagesQuery,
   useSendMessageMutation,
+  useMarkThreadReadMutation,
 } from "@/store/features/communication/communicationApi";
 import { useAppSelector } from "@/store";
 import { selectCurrentUser } from "@/store/features/auth/authSlice";
@@ -24,6 +25,7 @@ function SellerMessagesContent() {
 
   const { data: threadsData, isLoading: isLoadingThreads } = useGetThreadsQuery();
   const [sendMessageApi] = useSendMessageMutation();
+  const [markThreadReadApi] = useMarkThreadReadMutation();
   const [activeConvoId, setActiveConvoId] = useState<string>("");
   const [mobileShowChat, setMobileShowChat] = useState(false);
   const [inputValue, setInputValue] = useState("");
@@ -149,11 +151,26 @@ function SellerMessagesContent() {
     return combined;
   }, [threadMessagesData, wsMessages, currentUser, localPendingMessages, activeConvoId]);
 
+  useEffect(() => {
+    if (activeConvoId && !isNaN(Number(activeConvoId))) {
+      markThreadReadApi(activeConvoId);
+    }
+  }, [activeConvoId, markThreadReadApi]);
+
+  useEffect(() => {
+    if (activeConvoId && wsMessages.length > 0 && !isNaN(Number(activeConvoId))) {
+      markThreadReadApi(activeConvoId);
+    }
+  }, [activeConvoId, wsMessages.length, markThreadReadApi]);
+
   const handleSelectConvo = (id: string) => {
     setActiveConvoId(id);
     setMobileShowChat(true);
     setInputValue("");
     sendTyping(false);
+    if (id && !isNaN(Number(id))) {
+      markThreadReadApi(id);
+    }
   };
 
   const handleInputChange = (val: string) => {
